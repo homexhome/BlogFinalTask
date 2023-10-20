@@ -1,0 +1,13 @@
+﻿@page "/admincontrol"
+
+<AuthorizeView>
+    <Authorized>
+        <AdministratorControlComponent />
+    </Authorized>
+    <NotAuthorized>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+
+}

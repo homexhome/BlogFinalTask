@@ -1,0 +1,87 @@
+﻿@* @using BlogFinalTask.Web.CustomExceptions
+
+@inject IRepositoryCollection repo
+@inject AuthenticationStateProvider authState
+@inject UserManager<IdentityUser> userManager
+@inject RoleManager<IdentityRole> roleManager
+
+<AuthorizeView>
+    <Authorized>
+        <RadzenDataGrid @ref="dataGrid" AllowAlternatingRows="false" AllowSorting="true" EditMode="DataGridEditMode.Single"
+                        Data="@users" TItem="IdentityUser" RowUpdate="@OnUpdateRow">
+            <Columns>
+                <RadzenDataGridColumn TItem="IdentityUser" Property="Name" Title="Name" Width="200px">
+                    <EditTemplate Context="user">
+                        <RadzenTextBox @bind-Value="user.UserName" Style="width:100%; display: block" Name="Name" />
+                        <RadzenRequiredValidator Text="Name is Required" Component="Name" Popup="true" />
+                    </EditTemplate>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="IdentityUser" Property="Name" Title="Role" Width="200px">
+                    @* <EditTemplate Context="user">
+                        <RadzenDropDown TValue="string" TItem="KeyValuePair<string,string>" DataSource="@usersRoles.ToList()"
+                        @bind-Value="@user.Name" Style="width:100%; display: block"></RadzenDropDown>
+                    </EditTemplate> 
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="IdentityUser" Context="user" Filterable="false" Sortable="false" TextAlign="TextAlign.Right" Width="150px">
+                    <Template Context="user">
+                        <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@(args => EditRow(user))" @onclick:stopPropagation="true">
+                        </RadzenButton>
+                        <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Variant="Variant.Flat" Shade="Shade.Lighter" Size="ButtonSize.Medium" class="my-1 ms-1" Click="@(args => DeleteRow(user))" @onclick:stopPropagation="true">
+                        </RadzenButton>
+                    </Template>
+                    <EditTemplate Context="user">
+                        <RadzenButton Icon="check" ButtonStyle="ButtonStyle.Success" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@((args) => SaveRow(user))">
+                        </RadzenButton>
+                        <RadzenButton Icon="close" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" class="my-1 ms-1" Click="@((args) => CancelEdit(user))">
+                        </RadzenButton>
+                        <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Variant="Variant.Flat" Shade="Shade.Lighter" Size="ButtonSize.Medium" class="my-1 ms-1" Click="@(args => DeleteRow(user))">
+                        </RadzenButton>
+                    </EditTemplate>
+                </RadzenDataGridColumn>
+
+            </Columns>
+        </RadzenDataGrid>
+    </Authorized>
+</AuthorizeView>
+
+
+
+@code {
+    List<IdentityUser> users = new();
+    List<IdentityRole> allRoles = new();
+    Dictionary<string, string> usersRoles = new();
+    KeyValuePair<string, string> currentRole;
+
+    protected override async Task OnInitializedAsync() {
+        AdministratorService administratorService = new(userManager);
+        RoleManagingService roleService = new(roleManager, userManager);
+
+        allRoles = await roleService.GetAllRoles();
+        users = await administratorService.GetAllUsers();
+        foreach (var user in users) {
+            if (user != null) {
+                string role = await roleService.GetUserRole(user);
+                usersRoles.Add(user.Id, role);
+                currentRole = new KeyValuePair<string, string>(user.Id, role);
+            }
+        }
+    }
+
+    void OnUpdateRow(IdentityUser user) {
+        throw new NotImplementedException();
+    }
+    void EditRow(IdentityUser user) {
+        throw new NotImplementedException();
+
+    }
+    void SaveRow(IdentityUser user) {
+        throw new NotImplementedException();
+
+    }
+
+    void CancelEdit(IdentityUser user) {
+    }
+    void DeleteRow(IdentityUser user) {
+    }
+}
+ *@
