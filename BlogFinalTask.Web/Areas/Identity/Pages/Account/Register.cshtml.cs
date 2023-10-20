@@ -122,13 +122,13 @@ namespace BlogFinalTask.Web.Areas.Identity.Pages.Account
 
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
-                var roleId = await _roleManager.Roles.FirstOrDefaultAsync(i => i.Name == "User");
-                if (roleId != null) {
-                    user.RoleId = roleId.Id;
-                }
                 var result = await _userManager.CreateAsync(user, Input.Password);
 
 
+                var roleId = await _roleManager.Roles.FirstOrDefaultAsync(i => i.Name == "User");
+                if (roleId != null) {
+                    await _userManager.AddToRoleAsync(user, "User");
+                }
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User created a new account with password.");

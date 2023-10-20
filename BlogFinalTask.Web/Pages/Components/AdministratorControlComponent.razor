@@ -1,28 +1,35 @@
-﻿@* @using BlogFinalTask.Web.CustomExceptions
+﻿@using BlogFinalTask.Web.CustomExceptions
 
 @inject IRepositoryCollection repo
 @inject AuthenticationStateProvider authState
-@inject UserManager<IdentityUser> userManager
-@inject RoleManager<IdentityRole> roleManager
+@inject UserManager<CustomIdentity> userManager
+@inject RoleManager<CustomRole> roleManager
 
-<AuthorizeView>
+@{
+    foreach (var pair in userRoles) {
+        <p>@(pair.Key)</p>
+        <p>@(pair.Value)</p>
+
+    }
+}
+@* <AuthorizeView>
     <Authorized>
-        <RadzenDataGrid @ref="dataGrid" AllowAlternatingRows="false" AllowSorting="true" EditMode="DataGridEditMode.Single"
-                        Data="@users" TItem="IdentityUser" RowUpdate="@OnUpdateRow">
+        <RadzenDataGrid AllowAlternatingRows="false" AllowSorting="true" EditMode="DataGridEditMode.Single"
+                        Data="@users" TItem="CustomIdentity" RowUpdate="@OnUpdateRow">
             <Columns>
-                <RadzenDataGridColumn TItem="IdentityUser" Property="Name" Title="Name" Width="200px">
+                <RadzenDataGridColumn TItem="CustomIdentity" Property="Name" Title="Name" Width="200px">
                     <EditTemplate Context="user">
                         <RadzenTextBox @bind-Value="user.UserName" Style="width:100%; display: block" Name="Name" />
                         <RadzenRequiredValidator Text="Name is Required" Component="Name" Popup="true" />
                     </EditTemplate>
                 </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="IdentityUser" Property="Name" Title="Role" Width="200px">
-                    @* <EditTemplate Context="user">
-                        <RadzenDropDown TValue="string" TItem="KeyValuePair<string,string>" DataSource="@usersRoles.ToList()"
-                        @bind-Value="@user.Name" Style="width:100%; display: block"></RadzenDropDown>
-                    </EditTemplate> 
+                <RadzenDataGridColumn TItem="CustomIdentity" Property="Name" Title="Name" Width="200px">
+                    <EditTemplate Context="user">
+                        <RadzenTextBox @bind-Value="user.UserName" Style="width:100%; display: block" Name="Name" />
+                        <RadzenRequiredValidator Text="Name is Required" Component="Name" Popup="true" />
+                    </EditTemplate>
                 </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="IdentityUser" Context="user" Filterable="false" Sortable="false" TextAlign="TextAlign.Right" Width="150px">
+                <RadzenDataGridColumn TItem="CustomIdentity" Context="user" Filterable="false" Sortable="false" TextAlign="TextAlign.Right" Width="150px">
                     <Template Context="user">
                         <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@(args => EditRow(user))" @onclick:stopPropagation="true">
                         </RadzenButton>
@@ -42,29 +49,31 @@
             </Columns>
         </RadzenDataGrid>
     </Authorized>
-</AuthorizeView>
+</AuthorizeView> *@
 
 
 
 @code {
-    List<IdentityUser> users = new();
-    List<IdentityRole> allRoles = new();
+    Dictionary<string, string> userRoles = new();
+
+    List<CustomIdentity> users = new();
     Dictionary<string, string> usersRoles = new();
-    KeyValuePair<string, string> currentRole;
 
     protected override async Task OnInitializedAsync() {
         AdministratorService administratorService = new(userManager);
         RoleManagingService roleService = new(roleManager, userManager);
 
-        allRoles = await roleService.GetAllRoles();
         users = await administratorService.GetAllUsers();
         foreach (var user in users) {
             if (user != null) {
                 string role = await roleService.GetUserRole(user);
-                usersRoles.Add(user.Id, role);
-                currentRole = new KeyValuePair<string, string>(user.Id, role);
+                userRoles.Add(user.Id, role);
             }
         }
+    }
+
+    async Task ReturnRole(CustomIdentity user) {
+        var a = await userManager.GetRolesAsync(user);
     }
 
     void OnUpdateRow(IdentityUser user) {
@@ -84,4 +93,3 @@
     void DeleteRow(IdentityUser user) {
     }
 }
- *@

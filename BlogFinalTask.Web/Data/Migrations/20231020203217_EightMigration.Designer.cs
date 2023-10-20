@@ -4,6 +4,7 @@ using BlogFinalTask.Web.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BlogFinalTask.Web.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231020203217_EightMigration")]
+    partial class EightMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -194,15 +197,15 @@ namespace BlogFinalTask.Web.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "d3a70d70-267c-4b16-94ab-b589f28cb7d2",
-                            ConcurrencyStamp = "f7365515-dd99-4761-82d3-bae52d04d5e2",
+                            Id = "83c1fa38-1ba0-40b1-924d-9891dbcd1847",
+                            ConcurrencyStamp = "1abdbd8e-66d6-4b12-a27a-d9bbed32ae40",
                             Name = "User",
                             NormalizedName = "USER"
                         },
                         new
                         {
-                            Id = "fd66ec81-a587-4ec9-9b16-4a4a8df44076",
-                            ConcurrencyStamp = "28346e5f-0716-4c9b-9eba-9628996e33c0",
+                            Id = "75f51818-2b3c-4d00-b398-832a4f89e9f0",
+                            ConcurrencyStamp = "521a8f39-dae5-4529-8d46-7326f2e215b8",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         });

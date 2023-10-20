@@ -29,14 +29,7 @@ namespace BlogFinalTask.Web.Data
             RemoveFixups(builder, typeof(Tag));
             RemoveFixups(builder, typeof(ArticleTags));
             RemoveFixups(builder, typeof(Comment));
-            RemoveFixups(builder, typeof(CustomIdentity));
 
-
-            builder.Entity<CustomIdentity>()
-            .HasOne(u => u.Role)
-            .WithMany()
-            .HasForeignKey(u => u.RoleId)
-            .OnDelete(DeleteBehavior.NoAction);
 
             builder.Entity<CustomRole>().HasData(new CustomRole {
                 Name = "User",
