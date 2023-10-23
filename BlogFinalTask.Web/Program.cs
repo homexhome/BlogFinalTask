@@ -3,12 +3,15 @@ using BlogFinalTask.Web.Areas.Identity;
 using BlogFinalTask.Web.Data;
 using BlogFinalTask.Web.Data.Models;
 using BlogFinalTask.Web.Repository;
+using BlogFinalTask.Web.Services;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace BlogFinalTask.Web
 {
@@ -32,13 +35,16 @@ namespace BlogFinalTask.Web
             builder.Services.AddOptions();
             builder.Services.AddAuthorizationCore();
             builder.Services.AddAuthorization(options => {
-                options.AddPolicy("RequaredAdministratorRole", policy => policy.RequireRole("Administrator"));
+                options.AddPolicy("RequireAdminRole", policy => policy.RequireRole(ClaimTypes.Role, "Admin"));
+                options.AddPolicy("RequireModeratorRole", policy => policy.RequireRole(ClaimTypes.Role, "Moderator"));
             });
             var mapperConfig = new MapperConfiguration(mc => {
                 mc.AddProfile(new AutoMapperProfile());
             });
+
             IMapper mapper = mapperConfig.CreateMapper();
             builder.Services.AddSingleton(mapper);
+            builder.Services.AddScoped<AdministratorService>();
 
             var app = builder.Build();
 
@@ -58,6 +64,7 @@ namespace BlogFinalTask.Web
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllers();

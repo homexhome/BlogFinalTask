@@ -6,13 +6,16 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading;
 using System.Threading.Tasks;
 using BlogFinalTask.Web.Data.Models;
+using BlogFinalTask.Web.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -116,24 +119,18 @@ namespace BlogFinalTask.Web.Areas.Identity.Pages.Account
         {
             returnUrl ??= Url.Content("~/");
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
-            if (ModelState.IsValid)
-            {
+            if (ModelState.IsValid) {
                 var user = CreateUser();
 
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
                 var result = await _userManager.CreateAsync(user, Input.Password);
+                await AssignBaseRole(user);
+                await CreateBaseClaim(user);
 
-
-                var roleId = await _roleManager.Roles.FirstOrDefaultAsync(i => i.Name == "User");
-                if (roleId != null) {
-                    await _userManager.AddToRoleAsync(user, "User");
-                }
-                if (result.Succeeded)
-                {
+                if (result.Succeeded) {
                     _logger.LogInformation("User created a new account with password.");
-                    //Setting base role
-                    
+
 
                     var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
@@ -147,24 +144,30 @@ namespace BlogFinalTask.Web.Areas.Identity.Pages.Account
                     await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
                         $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
 
-                    if (_userManager.Options.SignIn.RequireConfirmedAccount)
-                    {
+                    if (_userManager.Options.SignIn.RequireConfirmedAccount) {
                         return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
                     }
-                    else
-                    {
+                    else {
                         await _signInManager.SignInAsync(user, isPersistent: false);
                         return LocalRedirect(returnUrl);
                     }
                 }
-                foreach (var error in result.Errors)
-                {
+                foreach (var error in result.Errors) {
                     ModelState.AddModelError(string.Empty, error.Description);
                 }
             }
 
             // If we got this far, something failed, redisplay form
             return Page();
+        }
+
+        private async Task AssignBaseRole(CustomIdentity user) {
+            UserRoleService roleService = new(_userManager, _roleManager);
+            await roleService.AssignBaseRole(user);
+        }
+        private async Task CreateBaseClaim(CustomIdentity user) {
+            UserClaimsService claimsService = new(_userManager, _roleManager);
+            await claimsService.AddDefaultClaim(user);
         }
 
         private CustomIdentity CreateUser()

@@ -1,35 +1,28 @@
 ﻿@using BlogFinalTask.Web.CustomExceptions
-
 @inject IRepositoryCollection repo
 @inject AuthenticationStateProvider authState
 @inject UserManager<CustomIdentity> userManager
 @inject RoleManager<CustomRole> roleManager
+@inject SignInManager<CustomIdentity> signInManager
 
-@{
-    foreach (var pair in userRoles) {
-        <p>@(pair.Key)</p>
-        <p>@(pair.Value)</p>
-
-    }
-}
-@* <AuthorizeView>
+<AuthorizeView Roles="Moderator,Admin">
     <Authorized>
-        <RadzenDataGrid AllowAlternatingRows="false" AllowSorting="true" EditMode="DataGridEditMode.Single"
-                        Data="@users" TItem="CustomIdentity" RowUpdate="@OnUpdateRow">
+        <RadzenDataGrid @ref="usersGrid" AllowAlternatingRows="false" AllowSorting="true" EditMode="DataGridEditMode.Single"
+                        Data="@allUsers" TItem="CustomUserTransferModel" RowUpdate="@OnUpdateRow">
             <Columns>
-                <RadzenDataGridColumn TItem="CustomIdentity" Property="Name" Title="Name" Width="200px">
+                <RadzenDataGridColumn TItem="CustomUserTransferModel" Property="UserName" Title="User Name" Width="200px">
                     <EditTemplate Context="user">
-                        <RadzenTextBox @bind-Value="user.UserName" Style="width:100%; display: block" Name="Name" />
-                        <RadzenRequiredValidator Text="Name is Required" Component="Name" Popup="true" />
+                        <RadzenTextBox @bind-Value="user.UserName" Style="width:100%; display: block" Name="UserName" />
+                        <RadzenRequiredValidator Text="Name is Required" Component="UserName" Popup="true" />
                     </EditTemplate>
                 </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="CustomIdentity" Property="Name" Title="Name" Width="200px">
+                <RadzenDataGridColumn TItem="CustomUserTransferModel" Property="UserRole" Title="User Role" Width="200px">
                     <EditTemplate Context="user">
-                        <RadzenTextBox @bind-Value="user.UserName" Style="width:100%; display: block" Name="Name" />
-                        <RadzenRequiredValidator Text="Name is Required" Component="Name" Popup="true" />
+                        <RadzenDropDown @bind-Value="user.UserRole" Data="@allUserRoles" Style="width:100%; display: block" Name="UserRole" />
+                        <RadzenRequiredValidator Text="Role is Required" Component="UserRole" Popup="true" />
                     </EditTemplate>
                 </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="CustomIdentity" Context="user" Filterable="false" Sortable="false" TextAlign="TextAlign.Right" Width="150px">
+                <RadzenDataGridColumn TItem="CustomUserTransferModel" Context="user" Filterable="false" Sortable="false" TextAlign="TextAlign.Right" Width="150px">
                     <Template Context="user">
                         <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@(args => EditRow(user))" @onclick:stopPropagation="true">
                         </RadzenButton>
@@ -49,47 +42,40 @@
             </Columns>
         </RadzenDataGrid>
     </Authorized>
-</AuthorizeView> *@
+</AuthorizeView>
 
 
 
 @code {
-    Dictionary<string, string> userRoles = new();
-
-    List<CustomIdentity> users = new();
-    Dictionary<string, string> usersRoles = new();
+    List<CustomUserTransferModel>? allUsers;
+    RadzenDataGrid<CustomUserTransferModel>? usersGrid;
+    AdministratorService? administratorService;
+    List<string> allUserRoles = new();
 
     protected override async Task OnInitializedAsync() {
-        AdministratorService administratorService = new(userManager);
-        RoleManagingService roleService = new(roleManager, userManager);
-
-        users = await administratorService.GetAllUsers();
-        foreach (var user in users) {
-            if (user != null) {
-                string role = await roleService.GetUserRole(user);
-                userRoles.Add(user.Id, role);
-            }
-        }
+        administratorService = new(userManager, roleManager, repo, signInManager);
+        allUsers = await administratorService.GetAllUsers();
+        allUserRoles = await administratorService.GetAllRolesList();
     }
 
-    async Task ReturnRole(CustomIdentity user) {
-        var a = await userManager.GetRolesAsync(user);
-    }
 
-    void OnUpdateRow(IdentityUser user) {
-        throw new NotImplementedException();
+    async Task OnUpdateRow(CustomUserTransferModel users) {
+        administratorService = new(userManager, roleManager, repo, signInManager);
+        await administratorService.UpdateUser(users);
+        await administratorService.SaveChangesAsync();
     }
-    void EditRow(IdentityUser user) {
-        throw new NotImplementedException();
-
-    }
-    void SaveRow(IdentityUser user) {
-        throw new NotImplementedException();
+    async Task EditRow(CustomUserTransferModel users) {
+        StateHasChanged();
+        await usersGrid!.EditRow(users);
 
     }
-
-    void CancelEdit(IdentityUser user) {
+    async Task SaveRow(CustomUserTransferModel users) {
+        await usersGrid!.UpdateRow(users);
     }
-    void DeleteRow(IdentityUser user) {
+
+    void CancelEdit(CustomUserTransferModel users) {
+        usersGrid!.CancelEditRow(users);
+    }
+    void DeleteRow(CustomUserTransferModel users) {
     }
 }

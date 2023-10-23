@@ -4,6 +4,7 @@ using BlogFinalTask.Web.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BlogFinalTask.Web.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231023122307_ArticleMigration")]
+    partial class ArticleMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -36,8 +39,7 @@ namespace BlogFinalTask.Web.Data.Migrations
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasMaxLength(120)
-                        .HasColumnType("nvarchar(120)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserId")
                         .IsRequired()
@@ -48,16 +50,6 @@ namespace BlogFinalTask.Web.Data.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Articles");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "faacf959-a554-47f5-bc58-b79d198d7142",
-                            Content = "This is a fisrt placeholder article Content",
-                            CreateDate = new DateTime(2023, 10, 23, 15, 50, 18, 998, DateTimeKind.Local).AddTicks(6755),
-                            Title = "Welcome!",
-                            UserId = "8d42c0ee-0876-4b32-a7cd-c19ae565bd0d"
-                        });
                 });
 
             modelBuilder.Entity("BlogFinalTask.Web.Data.Models.ArticleTags", b =>
@@ -209,22 +201,22 @@ namespace BlogFinalTask.Web.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "65d28c2b-d687-4cb5-ad51-855316305adf",
-                            ConcurrencyStamp = "c350062b-3a75-4175-924e-1e29d6931bc0",
+                            Id = "3c214477-8329-4064-8501-babbec349dcd",
+                            ConcurrencyStamp = "bef468ce-43f5-4915-96c3-cdf875dcb158",
                             Name = "User",
                             NormalizedName = "USER"
                         },
                         new
                         {
-                            Id = "5a390e68-1dad-4365-8389-c099e0bf884d",
-                            ConcurrencyStamp = "e61f42e9-7555-402a-a53e-8b60d62977f4",
+                            Id = "595988b3-a810-4c26-9c14-7db899033338",
+                            ConcurrencyStamp = "4afa0d13-0d26-46df-a5f6-43a5c585297a",
                             Name = "Moderator",
                             NormalizedName = "MODERATOR"
                         },
                         new
                         {
-                            Id = "63625321-5f56-42f4-9cea-6d919fc4dd84",
-                            ConcurrencyStamp = "20eeabc1-1919-43e0-8817-c06cf0e53c92",
+                            Id = "29f35053-4149-4c78-b6b9-90ed654b5226",
+                            ConcurrencyStamp = "4153f245-c2e6-40f2-bd07-96ac05b9e071",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         });
@@ -275,21 +267,21 @@ namespace BlogFinalTask.Web.Data.Migrations
                             Id = -3,
                             ClaimType = "Role",
                             ClaimValue = "User",
-                            RoleId = "65d28c2b-d687-4cb5-ad51-855316305adf"
+                            RoleId = "3c214477-8329-4064-8501-babbec349dcd"
                         },
                         new
                         {
                             Id = -2,
                             ClaimType = "Role",
                             ClaimValue = "Moderator",
-                            RoleId = "5a390e68-1dad-4365-8389-c099e0bf884d"
+                            RoleId = "595988b3-a810-4c26-9c14-7db899033338"
                         },
                         new
                         {
                             Id = -1,
                             ClaimType = "Role",
                             ClaimValue = "Admin",
-                            RoleId = "63625321-5f56-42f4-9cea-6d919fc4dd84"
+                            RoleId = "29f35053-4149-4c78-b6b9-90ed654b5226"
                         });
                 });
 

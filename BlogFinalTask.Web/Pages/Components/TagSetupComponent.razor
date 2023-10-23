@@ -1,0 +1,115 @@
+﻿@using BlogFinalTask.Web.CustomExceptions;
+@inject IRepositoryCollection repo
+@inject AuthenticationStateProvider authState
+
+<AuthorizeView>
+    <Authorized>
+        <RadzenButton ButtonStyle="ButtonStyle.Success" Icon="add_circle_outline" class="mt-2 mb-4" Text="Add New Tag" Click="@InsertRow" Disabled=@(tagToInsert != null || tagToUpdate != null) />
+        <RadzenDataGrid @ref="tagGrid" AllowAlternatingRows="false" AllowSorting="true" EditMode="DataGridEditMode.Single"
+                        Data="@allTags" TItem="TagDTO" RowUpdate="@OnUpdateRow" RowCreate="@OnCreateRow" Sort="@Reset">
+            <Columns>
+                <RadzenDataGridColumn TItem="TagDTO" Property="Text" Title="Tag Name" Width="200px">
+                    <EditTemplate Context="tag">
+                        <RadzenTextBox @bind-Value="tag.Text" Style="width:100%; display: block" Name="Text" />
+                        <RadzenRequiredValidator Text="Text is Required" Component="Text" Popup="true" />
+                    </EditTemplate>
+
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="TagDTO" Context="tag" Filterable="false" Sortable="false" TextAlign="TextAlign.Right" Width="150px">
+                    <Template Context="tag">
+                        <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@(args => EditRow(tag))" @onclick:stopPropagation="true">
+                        </RadzenButton>
+                        <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Variant="Variant.Flat" Shade="Shade.Lighter" Size="ButtonSize.Medium" class="my-1 ms-1" Click="@(args => DeleteRow(tag))" @onclick:stopPropagation="true">
+                        </RadzenButton>
+                    </Template>
+                    <EditTemplate Context="tag">
+                        <RadzenButton Icon="check" ButtonStyle="ButtonStyle.Success" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@((args) => SaveRow(tag))">
+                        </RadzenButton>
+                        <RadzenButton Icon="close" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" class="my-1 ms-1" Click="@((args) => CancelEdit(tag))">
+                        </RadzenButton>
+                        <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Variant="Variant.Flat" Shade="Shade.Lighter" Size="ButtonSize.Medium" class="my-1 ms-1" Click="@(args => DeleteRow(tag))">
+                        </RadzenButton>
+                    </EditTemplate>
+                </RadzenDataGridColumn>
+
+            </Columns>
+        </RadzenDataGrid>
+    </Authorized>
+</AuthorizeView>
+
+@code {
+    List<TagDTO> allTags = new();
+    RadzenDataGrid<TagDTO>? tagGrid;
+    TagDTO? tagToInsert;
+    TagDTO? tagToUpdate;
+
+    protected override async Task OnInitializedAsync() {
+        AuthenticationState auth = await authState.GetAuthenticationStateAsync();
+
+        allTags = await repo.Tag.GetAllAsync(auth.User);
+    }
+
+    async Task EditRow(TagDTO tag) {
+        tagToUpdate = tag;
+        await tagGrid!.EditRow(tag);
+    }
+
+    async Task DeleteRow(TagDTO tag) {
+        AuthenticationState auth = await authState.GetAuthenticationStateAsync();
+        Reset();
+        try {
+            bool found = await repo.Tag.DeleteObj(auth.User, tag.Id);
+            if (found) {
+                await repo.Save();
+                allTags = await repo.Tag.GetAllAsync(auth.User);
+                await tagGrid!.Reload();
+            }
+            else {
+                tagGrid!.CancelEditRow(tag);
+                await tagGrid!.Reload();
+            }
+        }
+        catch (RepositoryDeleteException) {
+            // can't delete because would break integrity!
+        }
+    }
+
+    async Task SaveRow(TagDTO tag) {
+        await tagGrid!.UpdateRow(tag);
+    }
+
+    void CancelEdit(TagDTO tag) {
+        Reset();
+        tagGrid!.CancelEditRow(tag);
+    }
+
+    async Task OnUpdateRow(TagDTO tag) {
+        AuthenticationState auth = await authState.GetAuthenticationStateAsync();
+
+        await repo.Tag.UpdateObj(auth.User,tag);
+        await repo.Save();
+    }
+
+    async Task InsertRow() {
+        tagToInsert = new TagDTO();
+        await tagGrid!.InsertRow(tagToInsert);
+    }
+
+    async Task OnCreateRow(TagDTO tag) {
+        AuthenticationState auth = await authState.GetAuthenticationStateAsync();
+
+        if (tag.Text == null) {
+            throw new Exception("Tag text field is null!");
+        }
+
+        tag.Id = await repo.Tag.AddObj(auth.User, tag);
+        await repo.Save();
+        allTags = await repo.Tag.GetAllAsync(auth.User);
+        tagToInsert = null;
+    }
+
+    void Reset() {
+        tagToInsert = null;
+        tagToUpdate = null;
+    }
+}

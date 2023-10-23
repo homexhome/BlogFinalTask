@@ -1,4 +1,6 @@
-﻿namespace BlogFinalTask.Web.Repository
+﻿using BlogFinalTask.Web.Services;
+
+namespace BlogFinalTask.Web.Repository
 {
     public interface IRepositoryCollection : IDisposable
     {

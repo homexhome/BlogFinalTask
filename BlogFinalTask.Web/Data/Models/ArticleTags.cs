@@ -7,10 +7,10 @@ namespace BlogFinalTask.Web.Data.Models
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public string Id { get; set; } = Guid.NewGuid().ToString();
 
-        public string ArcticleId { get; set; } = null!;
-        public Article? Article { get; set; }
+        public string ArcticleId { get; set; } = String.Empty;
+        public Article? Article { get; set; } = null!;
 
-        public string TagId { get; set; } = null!;
-        public Tag? Tag { get; set; }
+        public string TagId { get; set; } = String.Empty;
+        public Tag? Tag { get; set; } = null!;
     }
 }

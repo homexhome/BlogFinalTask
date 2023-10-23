@@ -1,0 +1,31 @@
+﻿@using BlogFinalTask.Web.CustomExceptions
+@inject IRepositoryCollection repo
+@inject AuthenticationStateProvider authState
+
+
+
+<RadzenDataGrid @ref="articleGrid" AllowPaging="true" PageSize="10" Data="@articles" TItem="ArticleDTO" AllowSorting="true">
+    <Columns>
+        <RadzenDataGridColumn TItem="ArticleDTO" Sortable="true" Filterable="true" TextAlign="TextAlign.Left" Width="100px" Title="Статья">
+            <Template Context="article">
+                <div style="margin-bottom: 10px; font-weight: bold;">@article.Title</div>
+                <div>@article.Content</div>
+            </Template>
+        </RadzenDataGridColumn>
+    </Columns>
+</RadzenDataGrid>
+
+
+@code {
+    List<ArticleDTO>? articles;
+    RadzenDataGrid<ArticleDTO>? articleGrid;
+
+    protected async override Task OnInitializedAsync() {
+        articles = await ReturnAllArticles();
+    }
+
+    async Task<List<ArticleDTO>> ReturnAllArticles() {
+        AuthenticationState auth = await authState.GetAuthenticationStateAsync();
+        return await repo.Article.GetAllAsync(auth.User);
+    }
+}

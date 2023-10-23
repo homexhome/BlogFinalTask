@@ -4,6 +4,7 @@ using BlogFinalTask.Web.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BlogFinalTask.Web.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231022125629_ModeratorRoleAddMigration")]
+    partial class ModeratorRoleAddMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -34,11 +37,6 @@ namespace BlogFinalTask.Web.Data.Migrations
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(120)
-                        .HasColumnType("nvarchar(120)");
-
                     b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
@@ -48,16 +46,6 @@ namespace BlogFinalTask.Web.Data.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Articles");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "faacf959-a554-47f5-bc58-b79d198d7142",
-                            Content = "This is a fisrt placeholder article Content",
-                            CreateDate = new DateTime(2023, 10, 23, 15, 50, 18, 998, DateTimeKind.Local).AddTicks(6755),
-                            Title = "Welcome!",
-                            UserId = "8d42c0ee-0876-4b32-a7cd-c19ae565bd0d"
-                        });
                 });
 
             modelBuilder.Entity("BlogFinalTask.Web.Data.Models.ArticleTags", b =>
@@ -209,22 +197,22 @@ namespace BlogFinalTask.Web.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "65d28c2b-d687-4cb5-ad51-855316305adf",
-                            ConcurrencyStamp = "c350062b-3a75-4175-924e-1e29d6931bc0",
+                            Id = "9fe29154-c8ec-4f1f-bde0-3f9e84b535e5",
+                            ConcurrencyStamp = "e32f8bb6-b7a2-4df6-925a-6e7493a64776",
                             Name = "User",
                             NormalizedName = "USER"
                         },
                         new
                         {
-                            Id = "5a390e68-1dad-4365-8389-c099e0bf884d",
-                            ConcurrencyStamp = "e61f42e9-7555-402a-a53e-8b60d62977f4",
+                            Id = "3c1ac8e2-c90b-423a-a6b4-2998dbe87be2",
+                            ConcurrencyStamp = "b8f4d6af-ce9b-49f0-8487-2d97cd3e3473",
                             Name = "Moderator",
                             NormalizedName = "MODERATOR"
                         },
                         new
                         {
-                            Id = "63625321-5f56-42f4-9cea-6d919fc4dd84",
-                            ConcurrencyStamp = "20eeabc1-1919-43e0-8817-c06cf0e53c92",
+                            Id = "c3f27360-caa4-42fd-8d01-30d678956937",
+                            ConcurrencyStamp = "f739befe-5a52-438e-a439-534a89b4fad5",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         });
@@ -268,29 +256,6 @@ namespace BlogFinalTask.Web.Data.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetRoleClaims", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = -3,
-                            ClaimType = "Role",
-                            ClaimValue = "User",
-                            RoleId = "65d28c2b-d687-4cb5-ad51-855316305adf"
-                        },
-                        new
-                        {
-                            Id = -2,
-                            ClaimType = "Role",
-                            ClaimValue = "Moderator",
-                            RoleId = "5a390e68-1dad-4365-8389-c099e0bf884d"
-                        },
-                        new
-                        {
-                            Id = -1,
-                            ClaimType = "Role",
-                            ClaimValue = "Admin",
-                            RoleId = "63625321-5f56-42f4-9cea-6d919fc4dd84"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>

@@ -6,6 +6,5 @@ namespace BlogFinalTask.Web.Repository
 {
     public interface IArticleRepository : IGenericRepository<Article,ArticleDTO>
     {
-        Task<string> CreateAtricle(ClaimsPrincipal user, ArticleDTO articleDTO);
     }
 }

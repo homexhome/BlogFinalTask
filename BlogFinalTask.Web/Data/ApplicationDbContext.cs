@@ -30,18 +30,47 @@ namespace BlogFinalTask.Web.Data
             RemoveFixups(builder, typeof(ArticleTags));
             RemoveFixups(builder, typeof(Comment));
 
+            string userId = Guid.NewGuid().ToString();
+            string moderatorId = Guid.NewGuid().ToString();
+            string adminId = Guid.NewGuid().ToString();
+            builder.Entity<IdentityRoleClaim<string>>().Property(x => x.Id).UseIdentityColumn();
 
+            // SEED DATA
             builder.Entity<CustomRole>().HasData(new CustomRole {
                 Name = "User",
                 NormalizedName = "USER",
-                Id = Guid.NewGuid().ToString(),
+                Id = userId,
+                ConcurrencyStamp = Guid.NewGuid().ToString()
+            });
+            builder.Entity<CustomRole>().HasData(new CustomRole {
+                Name = "Moderator",
+                NormalizedName = "MODERATOR",
+                Id = moderatorId,
                 ConcurrencyStamp = Guid.NewGuid().ToString()
             });
             builder.Entity<CustomRole>().HasData(new CustomRole {
                 Name = "Admin",
                 NormalizedName = "ADMIN",
-                Id = Guid.NewGuid().ToString(),
+                Id = adminId,
                 ConcurrencyStamp = Guid.NewGuid().ToString()
+            });
+            builder.Entity<IdentityRoleClaim<string>>().HasData(new IdentityRoleClaim<string> {
+                Id = -3,
+                RoleId = userId,
+                ClaimType = "Role",
+                ClaimValue = "User"
+            });
+            builder.Entity<IdentityRoleClaim<string>>().HasData(new IdentityRoleClaim<string> {
+                Id = -2,
+                RoleId = moderatorId,
+                ClaimType = "Role",
+                ClaimValue = "Moderator"
+            });
+            builder.Entity<IdentityRoleClaim<string>>().HasData(new IdentityRoleClaim<string> {
+                Id= -1,
+                RoleId = adminId,
+                ClaimType = "Role",
+                ClaimValue = "Admin"
             });
 
             base.OnModelCreating(builder);

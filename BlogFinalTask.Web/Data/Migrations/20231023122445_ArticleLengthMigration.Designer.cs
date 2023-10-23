@@ -4,6 +4,7 @@ using BlogFinalTask.Web.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BlogFinalTask.Web.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231023122445_ArticleLengthMigration")]
+    partial class ArticleLengthMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -48,16 +51,6 @@ namespace BlogFinalTask.Web.Data.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Articles");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "faacf959-a554-47f5-bc58-b79d198d7142",
-                            Content = "This is a fisrt placeholder article Content",
-                            CreateDate = new DateTime(2023, 10, 23, 15, 50, 18, 998, DateTimeKind.Local).AddTicks(6755),
-                            Title = "Welcome!",
-                            UserId = "8d42c0ee-0876-4b32-a7cd-c19ae565bd0d"
-                        });
                 });
 
             modelBuilder.Entity("BlogFinalTask.Web.Data.Models.ArticleTags", b =>
@@ -209,22 +202,22 @@ namespace BlogFinalTask.Web.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "65d28c2b-d687-4cb5-ad51-855316305adf",
-                            ConcurrencyStamp = "c350062b-3a75-4175-924e-1e29d6931bc0",
+                            Id = "2b1897c6-d094-4b83-b18e-b2afe3bd48ef",
+                            ConcurrencyStamp = "b0c36452-2f9b-4659-a2f4-806daf2d30b8",
                             Name = "User",
                             NormalizedName = "USER"
                         },
                         new
                         {
-                            Id = "5a390e68-1dad-4365-8389-c099e0bf884d",
-                            ConcurrencyStamp = "e61f42e9-7555-402a-a53e-8b60d62977f4",
+                            Id = "7db1a8d3-aabc-43cb-a0da-10cbc2b3bd8b",
+                            ConcurrencyStamp = "7527502d-d19a-40f9-8735-c52ee0af1111",
                             Name = "Moderator",
                             NormalizedName = "MODERATOR"
                         },
                         new
                         {
-                            Id = "63625321-5f56-42f4-9cea-6d919fc4dd84",
-                            ConcurrencyStamp = "20eeabc1-1919-43e0-8817-c06cf0e53c92",
+                            Id = "3c2099f4-3aae-4c19-ad25-ff21ce6b77cd",
+                            ConcurrencyStamp = "978b395c-0933-4663-a34e-fabf4d376908",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         });
@@ -275,21 +268,21 @@ namespace BlogFinalTask.Web.Data.Migrations
                             Id = -3,
                             ClaimType = "Role",
                             ClaimValue = "User",
-                            RoleId = "65d28c2b-d687-4cb5-ad51-855316305adf"
+                            RoleId = "2b1897c6-d094-4b83-b18e-b2afe3bd48ef"
                         },
                         new
                         {
                             Id = -2,
                             ClaimType = "Role",
                             ClaimValue = "Moderator",
-                            RoleId = "5a390e68-1dad-4365-8389-c099e0bf884d"
+                            RoleId = "7db1a8d3-aabc-43cb-a0da-10cbc2b3bd8b"
                         },
                         new
                         {
                             Id = -1,
                             ClaimType = "Role",
                             ClaimValue = "Admin",
-                            RoleId = "63625321-5f56-42f4-9cea-6d919fc4dd84"
+                            RoleId = "3c2099f4-3aae-4c19-ad25-ff21ce6b77cd"
                         });
                 });
 
