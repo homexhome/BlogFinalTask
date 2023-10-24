@@ -2,27 +2,17 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Security.Claims;
-using System.Text;
-using System.Text.Encodings.Web;
-using System.Threading;
-using System.Threading.Tasks;
-using BlogFinalTask.Web.Data.Models;
-using BlogFinalTask.Web.Services;
+using BlogFinalTask.Data.Models;
+using BlogFinalTask.Services.AdministrationTools;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
+using System.ComponentModel.DataAnnotations;
+using System.Text;
+using System.Text.Encodings.Web;
 
 namespace BlogFinalTask.Web.Areas.Identity.Pages.Account
 {
@@ -43,8 +33,7 @@ namespace BlogFinalTask.Web.Areas.Identity.Pages.Account
             SignInManager<CustomIdentity> signInManager,
             ILogger<RegisterModel> logger,
             IEmailSender emailSender
-            )
-        {
+            ) {
             _userManager = userManager;
             _userStore = userStore;
             _emailStore = GetEmailStore();
@@ -109,14 +98,12 @@ namespace BlogFinalTask.Web.Areas.Identity.Pages.Account
         }
 
 
-        public async Task OnGetAsync(string returnUrl = null)
-        {
+        public async Task OnGetAsync(string returnUrl = null) {
             ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
         }
 
-        public async Task<IActionResult> OnPostAsync(string returnUrl = null)
-        {
+        public async Task<IActionResult> OnPostAsync(string returnUrl = null) {
             returnUrl ??= Url.Content("~/");
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid) {
@@ -170,24 +157,19 @@ namespace BlogFinalTask.Web.Areas.Identity.Pages.Account
             await claimsService.AddDefaultClaim(user);
         }
 
-        private CustomIdentity CreateUser()
-        {
-            try
-            {
+        private CustomIdentity CreateUser() {
+            try {
                 return Activator.CreateInstance<CustomIdentity>();
             }
-            catch
-            {
+            catch {
                 throw new InvalidOperationException($"Can't create an instance of '{nameof(IdentityUser)}'. " +
                     $"Ensure that '{nameof(IdentityUser)}' is not an abstract class and has a parameterless constructor, or alternatively " +
                     $"override the register page in /Areas/Identity/Pages/Account/Register.cshtml");
             }
         }
 
-        private IUserEmailStore<CustomIdentity> GetEmailStore()
-        {
-            if (!_userManager.SupportsUserEmail)
-            {
+        private IUserEmailStore<CustomIdentity> GetEmailStore() {
+            if (!_userManager.SupportsUserEmail) {
                 throw new NotSupportedException("The default UI requires a user store with email support.");
             }
             return (IUserEmailStore<CustomIdentity>)_userStore;

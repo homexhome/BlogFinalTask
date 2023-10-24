@@ -2,17 +2,11 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json;
-using System.Threading.Tasks;
-using BlogFinalTask.Web.Data.Models;
+using BlogFinalTask.Data.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Extensions.Logging;
+using System.Text.Json;
 
 namespace BlogFinalTask.Web.Areas.Identity.Pages.Account.Manage
 {
@@ -23,22 +17,18 @@ namespace BlogFinalTask.Web.Areas.Identity.Pages.Account.Manage
 
         public DownloadPersonalDataModel(
             UserManager<CustomIdentity> userManager,
-            ILogger<DownloadPersonalDataModel> logger)
-        {
+            ILogger<DownloadPersonalDataModel> logger) {
             _userManager = userManager;
             _logger = logger;
         }
 
-        public IActionResult OnGet()
-        {
+        public IActionResult OnGet() {
             return NotFound();
         }
 
-        public async Task<IActionResult> OnPostAsync()
-        {
+        public async Task<IActionResult> OnPostAsync() {
             var user = await _userManager.GetUserAsync(User);
-            if (user == null)
-            {
+            if (user == null) {
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
 
@@ -48,14 +38,12 @@ namespace BlogFinalTask.Web.Areas.Identity.Pages.Account.Manage
             var personalData = new Dictionary<string, string>();
             var personalDataProps = typeof(CustomIdentity).GetProperties().Where(
                             prop => Attribute.IsDefined(prop, typeof(PersonalDataAttribute)));
-            foreach (var p in personalDataProps)
-            {
+            foreach (var p in personalDataProps) {
                 personalData.Add(p.Name, p.GetValue(user)?.ToString() ?? "null");
             }
 
             var logins = await _userManager.GetLoginsAsync(user);
-            foreach (var l in logins)
-            {
+            foreach (var l in logins) {
                 personalData.Add($"{l.LoginProvider} external login provider key", l.ProviderKey);
             }
 

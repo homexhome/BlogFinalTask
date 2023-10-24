@@ -1,15 +1,10 @@
 using AutoMapper;
+using BlogFinalTask.Data;
+using BlogFinalTask.Data.Models;
+using BlogFinalTask.Data.Repository;
+using BlogFinalTask.Services.AdministrationTools;
 using BlogFinalTask.Web.Areas.Identity;
-using BlogFinalTask.Web.Data;
-using BlogFinalTask.Web.Data.Models;
-using BlogFinalTask.Web.Repository;
-using BlogFinalTask.Web.Services;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Components.Web;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 

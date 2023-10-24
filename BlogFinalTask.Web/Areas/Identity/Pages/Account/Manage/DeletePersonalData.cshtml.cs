@@ -2,14 +2,11 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
 
-using System;
-using System.ComponentModel.DataAnnotations;
-using System.Threading.Tasks;
-using BlogFinalTask.Web.Data.Models;
+using BlogFinalTask.Data.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Extensions.Logging;
+using System.ComponentModel.DataAnnotations;
 
 namespace BlogFinalTask.Web.Areas.Identity.Pages.Account.Manage
 {
@@ -22,8 +19,7 @@ namespace BlogFinalTask.Web.Areas.Identity.Pages.Account.Manage
         public DeletePersonalDataModel(
             UserManager<CustomIdentity> userManager,
             SignInManager<CustomIdentity> signInManager,
-            ILogger<DeletePersonalDataModel> logger)
-        {
+            ILogger<DeletePersonalDataModel> logger) {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
@@ -57,11 +53,9 @@ namespace BlogFinalTask.Web.Areas.Identity.Pages.Account.Manage
         /// </summary>
         public bool RequirePassword { get; set; }
 
-        public async Task<IActionResult> OnGet()
-        {
+        public async Task<IActionResult> OnGet() {
             var user = await _userManager.GetUserAsync(User);
-            if (user == null)
-            {
+            if (user == null) {
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
 
@@ -69,19 +63,15 @@ namespace BlogFinalTask.Web.Areas.Identity.Pages.Account.Manage
             return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync()
-        {
+        public async Task<IActionResult> OnPostAsync() {
             var user = await _userManager.GetUserAsync(User);
-            if (user == null)
-            {
+            if (user == null) {
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
 
             RequirePassword = await _userManager.HasPasswordAsync(user);
-            if (RequirePassword)
-            {
-                if (!await _userManager.CheckPasswordAsync(user, Input.Password))
-                {
+            if (RequirePassword) {
+                if (!await _userManager.CheckPasswordAsync(user, Input.Password)) {
                     ModelState.AddModelError(string.Empty, "Incorrect password.");
                     return Page();
                 }
@@ -89,8 +79,7 @@ namespace BlogFinalTask.Web.Areas.Identity.Pages.Account.Manage
 
             var result = await _userManager.DeleteAsync(user);
             var userId = await _userManager.GetUserIdAsync(user);
-            if (!result.Succeeded)
-            {
+            if (!result.Succeeded) {
                 throw new InvalidOperationException($"Unexpected error occurred deleting user.");
             }
 

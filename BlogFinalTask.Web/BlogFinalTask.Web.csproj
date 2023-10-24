@@ -19,4 +19,9 @@
     <PackageReference Include="Radzen.Blazor" Version="4.18.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\BlogFinalTask.Data\BlogFinalTask.Data.csproj" />
+    <ProjectReference Include="..\BlogFinalTask.Services\BlogFinalTask.Services.csproj" />
+  </ItemGroup>
+
 </Project>

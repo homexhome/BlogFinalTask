@@ -2,16 +2,11 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
 
-using System;
-using System.ComponentModel.DataAnnotations;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+using BlogFinalTask.Data.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Extensions.Logging;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Logging;
-using BlogFinalTask.Web.Data.Models;
+using System.ComponentModel.DataAnnotations;
 
 namespace BlogFinalTask.Web.Areas.Identity.Pages.Account
 {
@@ -24,8 +19,7 @@ namespace BlogFinalTask.Web.Areas.Identity.Pages.Account
         public LoginWith2faModel(
             SignInManager<CustomIdentity> signInManager,
             UserManager<CustomIdentity> userManager,
-            ILogger<LoginWith2faModel> logger)
-        {
+            ILogger<LoginWith2faModel> logger) {
             _signInManager = signInManager;
             _userManager = userManager;
             _logger = logger;
@@ -74,13 +68,11 @@ namespace BlogFinalTask.Web.Areas.Identity.Pages.Account
             public bool RememberMachine { get; set; }
         }
 
-        public async Task<IActionResult> OnGetAsync(bool rememberMe, string returnUrl = null)
-        {
+        public async Task<IActionResult> OnGetAsync(bool rememberMe, string returnUrl = null) {
             // Ensure the user has gone through the username & password screen first
             var user = await _signInManager.GetTwoFactorAuthenticationUserAsync();
 
-            if (user == null)
-            {
+            if (user == null) {
                 throw new InvalidOperationException($"Unable to load two-factor authentication user.");
             }
 
@@ -90,18 +82,15 @@ namespace BlogFinalTask.Web.Areas.Identity.Pages.Account
             return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync(bool rememberMe, string returnUrl = null)
-        {
-            if (!ModelState.IsValid)
-            {
+        public async Task<IActionResult> OnPostAsync(bool rememberMe, string returnUrl = null) {
+            if (!ModelState.IsValid) {
                 return Page();
             }
 
             returnUrl = returnUrl ?? Url.Content("~/");
 
             var user = await _signInManager.GetTwoFactorAuthenticationUserAsync();
-            if (user == null)
-            {
+            if (user == null) {
                 throw new InvalidOperationException($"Unable to load two-factor authentication user.");
             }
 
@@ -111,18 +100,15 @@ namespace BlogFinalTask.Web.Areas.Identity.Pages.Account
 
             var userId = await _userManager.GetUserIdAsync(user);
 
-            if (result.Succeeded)
-            {
+            if (result.Succeeded) {
                 _logger.LogInformation("User with ID '{UserId}' logged in with 2fa.", user.Id);
                 return LocalRedirect(returnUrl);
             }
-            else if (result.IsLockedOut)
-            {
+            else if (result.IsLockedOut) {
                 _logger.LogWarning("User with ID '{UserId}' account locked out.", user.Id);
                 return RedirectToPage("./Lockout");
             }
-            else
-            {
+            else {
                 _logger.LogWarning("Invalid authenticator code entered for user with ID '{UserId}'.", user.Id);
                 ModelState.AddModelError(string.Empty, "Invalid authenticator code.");
                 return Page();
