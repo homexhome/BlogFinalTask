@@ -1,0 +1,146 @@
+﻿@inject IRepositoryCollection repo
+@inject AuthenticationStateProvider authState
+@inject UserManager<CustomIdentity> userManager
+@inject RoleManager<CustomRole> roleManager
+@inject DialogService DialogService
+
+
+<AuthorizeView>
+    <Authorized>
+        <RadzenButton ButtonStyle="ButtonStyle.Success" Icon="add_circle_outline" class="mt-2 mb-4" Text="Add New Role" Click="@InsertRow" Disabled=@(roleToInsert != null || roleToUpdate != null) />
+        <RadzenDataGrid @ref="roleGrid" AllowAlternatingRows="false" AllowSorting="true" EditMode="DataGridEditMode.Single"
+                        Data="@allRoles" TItem="CustomRoleTransferModel" RowUpdate="@OnUpdateRow" RowCreate="@OnCreateRow" Sort="@Reset">
+            <Columns>
+                <RadzenDataGridColumn TItem="CustomRoleTransferModel" Property="RoleName" Title="Role Name" Width="200px">
+                    <EditTemplate Context="role">
+                        <RadzenTextBox @bind-Value="role.RoleName" Style="width:100%; display: block" Name="RoleName" />
+                        <RadzenRequiredValidator Text="Role Name is Required" Component="RoleName" Popup="true" />
+                    </EditTemplate>
+
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="CustomRoleTransferModel" Property="RoleDescription" Title="Role Description" Width="200px">
+                    <EditTemplate Context="role">
+                        <RadzenTextBox @bind-Value="role.RoleDescription" Style="width:100%; display: block" Name="RoleDescription" />
+                        <RadzenRequiredValidator Text="Description is Required" Component="RoleDescription" Popup="true" />
+                    </EditTemplate>
+
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="CustomRoleTransferModel" Context="role" Filterable="false" Sortable="false" TextAlign="TextAlign.Right" Width="150px">
+                    <Template Context="role">
+                        <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@(args => EditRow(role))" @onclick:stopPropagation="true">
+                        </RadzenButton>
+                        <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Variant="Variant.Flat" Shade="Shade.Lighter" Size="ButtonSize.Medium" class="my-1 ms-1" Click="@(args => DeleteRow(role))" @onclick:stopPropagation="true">
+                        </RadzenButton>
+                    </Template>
+                    <EditTemplate Context="role">
+                        <RadzenButton Icon="check" ButtonStyle="ButtonStyle.Success" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@((args) => SaveRow(role))">
+                        </RadzenButton>
+                        <RadzenButton Icon="close" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" class="my-1 ms-1" Click="@((args) => CancelEdit(role))">
+                        </RadzenButton>
+                        <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Variant="Variant.Flat" Shade="Shade.Lighter" Size="ButtonSize.Medium" class="my-1 ms-1" Click="@(args => DeleteRow(role))">
+                        </RadzenButton>
+                    </EditTemplate>
+                </RadzenDataGridColumn>
+            </Columns>
+        </RadzenDataGrid>
+    </Authorized>
+</AuthorizeView>
+
+@code {
+    List<CustomRoleTransferModel> allRoles = new();
+    RoleService? userRoleService;
+    RadzenDataGrid<CustomRoleTransferModel>? roleGrid;
+    CustomRoleTransferModel? roleToInsert;
+    CustomRoleTransferModel? roleToUpdate;
+
+    protected override async Task OnInitializedAsync() {
+        AuthenticationState auth = await authState.GetAuthenticationStateAsync();
+        userRoleService = new(userManager,roleManager);
+
+        allRoles = await userRoleService.GetAllRoles(auth.User);
+    }
+
+    async Task EditRow(CustomRoleTransferModel role) {
+        roleToInsert = role;
+        await roleGrid!.EditRow(role);
+    }
+
+    async Task DeleteRow(CustomRoleTransferModel role) {
+        AuthenticationState auth = await authState.GetAuthenticationStateAsync();
+        userRoleService = new(userManager, roleManager);
+        roleGrid!.CancelEditRow(role);
+        Reset();
+        try
+        {
+            await CheckIfBaseRole(role);
+
+            bool found = await userRoleService.FindIfRoleExists(role);
+
+            if (found) {
+                await repo.Save();
+                allRoles = await userRoleService.GetAllRoles(auth.User);
+                await roleGrid!.Reload();
+            }
+            else {
+                roleGrid!.CancelEditRow(role);
+                await roleGrid!.Reload();
+            }
+        }
+        catch (RepositoryDeleteException) {
+            // can't delete because would break integrity!
+        }
+    }
+
+    async Task SaveRow(CustomRoleTransferModel role) {
+        await roleGrid!.UpdateRow(role);
+    }
+
+    void CancelEdit(CustomRoleTransferModel role) {
+        Reset();
+        roleGrid!.CancelEditRow(role);
+    }
+
+    async Task OnUpdateRow(CustomRoleTransferModel role) {
+        AuthenticationState auth = await authState.GetAuthenticationStateAsync();
+        userRoleService = new(userManager, roleManager);
+        await CheckIfBaseRole(role);
+        await userRoleService.UpdateRole(auth.User, role);
+        
+        await repo.Save();
+        Reset();
+    }
+
+    async Task InsertRow() {
+        roleToInsert = new CustomRoleTransferModel();
+        await roleGrid!.InsertRow(roleToInsert);
+    }
+
+    async Task OnCreateRow(CustomRoleTransferModel role) {
+        AuthenticationState auth = await authState.GetAuthenticationStateAsync();
+
+        if (role.RoleName == null) {
+            throw new Exception("Role Name field is null!");
+        }
+        userRoleService = new(userManager, roleManager);
+        role.RoleId = await userRoleService.CreateRole(auth.User,role);
+        await repo.Save();
+        allRoles = await userRoleService.GetAllRoles(auth.User);
+        roleToInsert = null;
+    }
+
+    void Reset() {
+        roleToInsert = null;
+        roleToUpdate = null;
+    }
+
+    void CancelDelete() {
+    }
+
+    async Task CheckIfBaseRole(CustomRoleTransferModel role) {
+        if (role.RoleName == "Admin" || role.RoleName == "Moderator" || role.RoleName == "User") {
+            await DialogService.Alert("You can't edit or delete base roles!", "Alert",
+            new AlertOptions() { OkButtonText = "Got it" });
+            Reset();
+        }
+    }
+}

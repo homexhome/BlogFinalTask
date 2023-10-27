@@ -4,6 +4,7 @@ using BlogFinalTask.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BlogFinalTask.Web.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231027092232_DescriptionMigration")]
+    partial class DescriptionMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -203,24 +206,24 @@ namespace BlogFinalTask.Web.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "e505a21f-7b80-43e9-83eb-c56130a1165a",
-                            ConcurrencyStamp = "2de4ddd9-2feb-4d02-b4e4-b3caab3cb70e",
+                            Id = "afbad608-b3c8-4223-9d15-0d22ca4c85eb",
+                            ConcurrencyStamp = "db4faae5-634b-4a01-8a39-e2a70809e5b1",
                             Description = "Basic User Role",
                             Name = "User",
                             NormalizedName = "USER"
                         },
                         new
                         {
-                            Id = "926dd13c-f220-49cf-b093-7102fbfcba85",
-                            ConcurrencyStamp = "45084f1a-a437-41a3-9b23-f541eee1439a",
+                            Id = "4011e10f-e826-4ff1-9bcc-eecbdf996fbf",
+                            ConcurrencyStamp = "43ca184e-c415-431a-aec4-600ba925cacc",
                             Description = "Basic Moderator Role",
                             Name = "Moderator",
                             NormalizedName = "MODERATOR"
                         },
                         new
                         {
-                            Id = "b734f2b2-c4a7-4881-a2a8-2a395cc388f0",
-                            ConcurrencyStamp = "d9d51d39-62f9-43d5-9e02-4da5e2e8cd68",
+                            Id = "c70cf8cf-1e2e-4e08-9c83-214d2b18a37d",
+                            ConcurrencyStamp = "07fc5074-353f-42fc-9c97-ec9f1678a744",
                             Description = "Basic Admin Role",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
@@ -269,24 +272,24 @@ namespace BlogFinalTask.Web.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = 3,
+                            Id = -3,
                             ClaimType = "Role",
                             ClaimValue = "User",
-                            RoleId = "e505a21f-7b80-43e9-83eb-c56130a1165a"
+                            RoleId = "afbad608-b3c8-4223-9d15-0d22ca4c85eb"
                         },
                         new
                         {
-                            Id = 2,
+                            Id = -2,
                             ClaimType = "Role",
                             ClaimValue = "Moderator",
-                            RoleId = "926dd13c-f220-49cf-b093-7102fbfcba85"
+                            RoleId = "4011e10f-e826-4ff1-9bcc-eecbdf996fbf"
                         },
                         new
                         {
-                            Id = 1,
+                            Id = -1,
                             ClaimType = "Role",
                             ClaimValue = "Admin",
-                            RoleId = "b734f2b2-c4a7-4881-a2a8-2a395cc388f0"
+                            RoleId = "c70cf8cf-1e2e-4e08-9c83-214d2b18a37d"
                         });
                 });
 

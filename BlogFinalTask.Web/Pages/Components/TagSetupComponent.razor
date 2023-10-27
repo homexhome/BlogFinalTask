@@ -59,6 +59,7 @@
         try {
             bool found = await repo.Tag.DeleteObj(auth.User, tag.Id);
             if (found) {
+                await repo.Tag.DeleteObj(auth.User, tag.Id);
                 await repo.Save();
                 allTags = await repo.Tag.GetAllAsync(auth.User);
                 await tagGrid!.Reload();

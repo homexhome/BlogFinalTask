@@ -9,9 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlogFinalTask.Web", "BlogFi
 		{9B2D1A49-4DF0-4E04-B87F-1FC81C786968} = {9B2D1A49-4DF0-4E04-B87F-1FC81C786968}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlogFinalTask.Data", "BlogFinalTask.Data\BlogFinalTask.Data.csproj", "{9B2D1A49-4DF0-4E04-B87F-1FC81C786968}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlogFinalTask.Data", "BlogFinalTask.Data\BlogFinalTask.Data.csproj", "{9B2D1A49-4DF0-4E04-B87F-1FC81C786968}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlogFinalTask.Services", "BlogFinalTask.Services\BlogFinalTask.Services.csproj", "{3E6A0C4B-2A73-4FE7-9D7F-366C9628ABB1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlogFinalTask.Services", "BlogFinalTask.Services\BlogFinalTask.Services.csproj", "{3E6A0C4B-2A73-4FE7-9D7F-366C9628ABB1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

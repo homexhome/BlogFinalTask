@@ -149,11 +149,11 @@ namespace BlogFinalTask.Web.Areas.Identity.Pages.Account
         }
 
         private async Task AssignBaseRole(CustomIdentity user) {
-            UserRoleService roleService = new(_userManager, _roleManager);
+            RoleService roleService = new(_userManager, _roleManager);
             await roleService.AssignBaseRole(user);
         }
         private async Task CreateBaseClaim(CustomIdentity user) {
-            UserClaimsService claimsService = new(_userManager, _roleManager);
+            ClaimsService claimsService = new(_userManager, _roleManager);
             await claimsService.AddDefaultClaim(user);
         }
 

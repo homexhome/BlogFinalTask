@@ -32,45 +32,51 @@ namespace BlogFinalTask.Data
             string userId = Guid.NewGuid().ToString();
             string moderatorId = Guid.NewGuid().ToString();
             string adminId = Guid.NewGuid().ToString();
-            builder.Entity<IdentityRoleClaim<string>>().Property(x => x.Id).UseIdentityColumn();
 
             // SEED DATA
             builder.Entity<CustomRole>().HasData(new CustomRole {
                 Name = "User",
                 NormalizedName = "USER",
                 Id = userId,
-                ConcurrencyStamp = Guid.NewGuid().ToString()
+                ConcurrencyStamp = Guid.NewGuid().ToString(),
+                Description = "Basic User Role"
             });
             builder.Entity<CustomRole>().HasData(new CustomRole {
                 Name = "Moderator",
                 NormalizedName = "MODERATOR",
                 Id = moderatorId,
-                ConcurrencyStamp = Guid.NewGuid().ToString()
+                ConcurrencyStamp = Guid.NewGuid().ToString(),
+                Description = "Basic Moderator Role"
+
             });
             builder.Entity<CustomRole>().HasData(new CustomRole {
                 Name = "Admin",
                 NormalizedName = "ADMIN",
                 Id = adminId,
-                ConcurrencyStamp = Guid.NewGuid().ToString()
+                ConcurrencyStamp = Guid.NewGuid().ToString(),
+                Description = "Basic Admin Role"
             });
             builder.Entity<IdentityRoleClaim<string>>().HasData(new IdentityRoleClaim<string> {
-                Id = -3,
+                Id = 3,
                 RoleId = userId,
                 ClaimType = "Role",
                 ClaimValue = "User"
             });
             builder.Entity<IdentityRoleClaim<string>>().HasData(new IdentityRoleClaim<string> {
-                Id = -2,
+                Id = 2,
                 RoleId = moderatorId,
                 ClaimType = "Role",
                 ClaimValue = "Moderator"
             });
             builder.Entity<IdentityRoleClaim<string>>().HasData(new IdentityRoleClaim<string> {
-                Id = -1,
+                Id =1,
                 RoleId = adminId,
                 ClaimType = "Role",
                 ClaimValue = "Admin"
             });
+
+            builder.Entity<IdentityRoleClaim<string>>().Property(x => x.Id).UseIdentityColumn();
+
 
             base.OnModelCreating(builder);
         }

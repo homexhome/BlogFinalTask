@@ -29,7 +29,7 @@ namespace BlogFinalTask.Services.AdministrationTools
             List<CustomUserTransferModel> allUserList = new();
             List<CustomIdentity> userList = await _userManager.Users.ToListAsync();
             if (userList.Count == 0) {
-                throw new Exception("Role not foind");
+                throw new Exception("Users not foind");
             }
             foreach (var user in userList) {
                 var role = await _userManager.GetRolesAsync(user);
@@ -69,8 +69,8 @@ namespace BlogFinalTask.Services.AdministrationTools
         }
 
         public async Task UpdateUser(CustomUserTransferModel customUserModel) {
-            UserRoleService roleService = new(_userManager, _roleManager);
-            UserClaimsService claimsService = new(_userManager, _roleManager);
+            RoleService roleService = new(_userManager, _roleManager);
+            ClaimsService claimsService = new(_userManager, _roleManager);
             CustomIdentity? userToUpdate = await _userManager.FindByIdAsync(customUserModel.UserId)
                 ?? throw new Exception("User not found when updating ");
 

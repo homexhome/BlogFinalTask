@@ -8,6 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="Pages\Shared\RoleControl.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="12.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="7.0.12" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.12" />
@@ -22,6 +26,20 @@
   <ItemGroup>
     <ProjectReference Include="..\BlogFinalTask.Data\BlogFinalTask.Data.csproj" />
     <ProjectReference Include="..\BlogFinalTask.Services\BlogFinalTask.Services.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="Pages\Components\RoleSetupComponent.razor">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Pages\Shared\RoleControl.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Pages\Shared\RoleControl.cshtml" />
   </ItemGroup>
 
 </Project>

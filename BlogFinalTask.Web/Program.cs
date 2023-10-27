@@ -6,6 +6,7 @@ using BlogFinalTask.Services.AdministrationTools;
 using BlogFinalTask.Web.Areas.Identity;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.EntityFrameworkCore;
+using Radzen;
 using System.Security.Claims;
 
 namespace BlogFinalTask.Web
@@ -23,8 +24,10 @@ namespace BlogFinalTask.Web
             builder.Services.AddDefaultIdentity<CustomIdentity>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddRoles<CustomRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
+
             builder.Services.AddRazorPages();
             builder.Services.AddServerSideBlazor();
+            builder.Services.AddScoped<DialogService>();
             builder.Services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<CustomIdentity>>();
             builder.Services.AddTransient<IRepositoryCollection, RepositoryCollection>();
             builder.Services.AddOptions();

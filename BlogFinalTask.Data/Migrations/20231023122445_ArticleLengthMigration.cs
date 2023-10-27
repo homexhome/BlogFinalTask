@@ -51,21 +51,21 @@ namespace BlogFinalTask.Web.Data.Migrations
             migrationBuilder.UpdateData(
                 table: "AspNetRoleClaims",
                 keyColumn: "Id",
-                keyValue: -3,
+                keyValue: 3,
                 column: "RoleId",
                 value: "3c214477-8329-4064-8501-babbec349dcd");
 
             migrationBuilder.UpdateData(
                 table: "AspNetRoleClaims",
                 keyColumn: "Id",
-                keyValue: -2,
+                keyValue: 2,
                 column: "RoleId",
                 value: "595988b3-a810-4c26-9c14-7db899033338");
 
             migrationBuilder.UpdateData(
                 table: "AspNetRoleClaims",
                 keyColumn: "Id",
-                keyValue: -1,
+                keyValue: 1,
                 column: "RoleId",
                 value: "29f35053-4149-4c78-b6b9-90ed654b5226");
 

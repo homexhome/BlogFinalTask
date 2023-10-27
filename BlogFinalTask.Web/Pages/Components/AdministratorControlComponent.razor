@@ -5,7 +5,7 @@
 @inject RoleManager<CustomRole> roleManager
 @inject SignInManager<CustomIdentity> signInManager
 
-<AuthorizeView Roles="Moderator,Admin">
+<AuthorizeView>
     <Authorized>
         <RadzenDataGrid @ref="usersGrid" AllowAlternatingRows="false" AllowSorting="true" EditMode="DataGridEditMode.Single"
                         Data="@allUsers" TItem="CustomUserTransferModel" RowUpdate="@OnUpdateRow">
