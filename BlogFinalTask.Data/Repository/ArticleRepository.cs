@@ -17,5 +17,14 @@ namespace BlogFinalTask.Data.Repository
             return result;
         }
 
+        public async Task<ArticleDTO> GetById(string id) {
+            Article? entitiy = await context.Set<Article>().FirstOrDefaultAsync(a => a.Id == id);
+            if (entitiy is not null) {
+                ArticleDTO result = mapper.Map<ArticleDTO>(entitiy);
+                return result;
+            } else {
+                throw new Exception("No article was found");
+            }
+        }
     }
 }

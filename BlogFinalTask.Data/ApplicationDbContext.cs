@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection.Emit;
 
 namespace BlogFinalTask.Data
 {
@@ -28,6 +29,21 @@ namespace BlogFinalTask.Data
             RemoveFixups(builder, typeof(Tag));
             RemoveFixups(builder, typeof(ArticleTags));
             RemoveFixups(builder, typeof(Comment));
+
+            builder.Entity<ArticleTags>()
+        .HasKey(at => new { at.ArticleId, at.TagId });
+
+            builder.Entity<ArticleTags>()
+                .HasOne(at => at.Article)
+                .WithMany(a => a.ArticleTags)
+                .HasForeignKey(at => at.ArticleId)
+                .OnDelete(DeleteBehavior.Cascade); 
+
+            builder.Entity<ArticleTags>()
+                .HasOne(at => at.Tag)
+                .WithMany(t => t.ArticleTags)
+                .HasForeignKey(at => at.TagId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             string userId = Guid.NewGuid().ToString();
             string moderatorId = Guid.NewGuid().ToString();

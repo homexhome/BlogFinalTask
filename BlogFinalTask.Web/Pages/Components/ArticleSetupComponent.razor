@@ -2,8 +2,7 @@
 @inject IRepositoryCollection repo
 @inject AuthenticationStateProvider authState
 @inject NavigationManager Navigation
-@using Microsoft.JSInterop
-@inject IJSRuntime JSRuntime
+@inject DialogService DialogService
 
 
 <h1>Create a New Article</h1>
@@ -48,7 +47,8 @@
         AuthenticationState auth = await authState.GetAuthenticationStateAsync();
         if (articleDTO is not null && auth.User is not null) {
             if (string.IsNullOrEmpty(articleDTO.Title) || string.IsNullOrEmpty(articleDTO.Content)) {
-                await JSRuntime.InvokeVoidAsync("alert", "Title and Content are required fields.");
+                await DialogService.Alert("Title and Content are required fields!", "Alert",
+                    new AlertOptions() { OkButtonText = "Got it" });
                 return;
             }
 
@@ -60,6 +60,7 @@
 
             ArticleSetupService articleSetupService = new(repo, articleDTO, selectedTagObjects, auth.User);
             await articleSetupService.CreateArticle();
+            await articleSetupService.CreateArticleTags();
             await repo.Save();
             Navigation.NavigateTo("/");
         }

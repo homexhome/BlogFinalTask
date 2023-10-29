@@ -42,6 +42,15 @@ namespace BlogFinalTask.Services.AdministrationTools
             return allUserList;
         }
 
+        public async Task<string>? GetUserName(string userId) {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user is not null && user.UserName is not null) {
+                return user.UserName;
+            } else {
+                return null!;
+            }
+        }
+
         public async Task<List<string>> GetAllRolesList() {
             List<string> result = new();
             var roleList = await _roleManager.Roles.ToListAsync();

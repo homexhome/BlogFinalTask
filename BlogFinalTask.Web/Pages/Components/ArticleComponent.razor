@@ -1,5 +1,6 @@
 ﻿@inject IRepositoryCollection repo
 @inject AuthenticationStateProvider authState
+@inject NavigationManager navigationManager
 
 
 
@@ -7,8 +8,16 @@
     <Columns>
         <RadzenDataGridColumn TItem="ArticleDTO" Sortable="true" Filterable="true" TextAlign="TextAlign.Left" Width="100px" Title="Статья">
             <Template Context="article">
+                <div class="article-container">
                 <div style="margin-bottom: 10px; font-weight: bold;">@article.Title</div>
-                <div>@article.Content</div>
+                @if (article.Tags is not null) {
+                    foreach (var tag in article.Tags) {
+                        <div class="tag">@tag.Text</div>
+                    }
+                }
+                    <div>@article.Content</div>
+                    <button @onclick="()=> ViewComments(article.Id)">Просмотреть комментарии</button>
+                </div>
             </Template>
         </RadzenDataGridColumn>
     </Columns>
@@ -25,6 +34,14 @@
 
     async Task<List<ArticleDTO>> ReturnAllArticles() {
         AuthenticationState auth = await authState.GetAuthenticationStateAsync();
-        return await repo.Article.GetAllAsync(auth.User);
+        List<ArticleDTO> articles = await repo.Article.GetAllAsync(auth.User);
+        foreach (var article in articles) {
+            article.Tags = await repo.ArticleTags.GetArticleTagsById(article.Id);
+        }
+        return articles;
+
+    }
+    void ViewComments(string articleId) {
+        navigationManager.NavigateTo($"/ArticleDetails/{articleId}");
     }
 }

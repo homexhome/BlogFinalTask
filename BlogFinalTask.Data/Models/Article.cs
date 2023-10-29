@@ -14,5 +14,6 @@ namespace BlogFinalTask.Data.Models
         public string UserId { get; set; } = null!;
         public CustomIdentity? User { get; set; } = null!;
 
+        public ICollection<ArticleTags> ArticleTags { get; set; } = new List<ArticleTags>();
     }
 }

@@ -66,3 +66,39 @@ a, .btn-link {
     .blazor-error-boundary::after {
         content: "An error has occurred."
     }
+.tag {
+    display: inline-block;
+    padding: 3px 8px; 
+    margin: 5px;
+    background-color: #007bff;
+    color: #fff;
+    border-radius: 5px;
+    font-size: 12px; 
+}
+.article-container {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+}
+.comment {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 15px;
+    background-color: #f9f9f9;
+}
+
+.comment-content {
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+.comment-author {
+    font-weight: bold;
+    color: #007bff;
+}
+
+.comment-date {
+    color: #555;
+}

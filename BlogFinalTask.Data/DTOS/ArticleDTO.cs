@@ -10,5 +10,6 @@ namespace BlogFinalTask.Data.DTOS
         public string Title { get; set; } = null!;
         public string Content { get; set; } = null!;
         public string UserId { get; set; } = null!;
+        public List<TagDTO>? Tags { get; set; }
     }
 }

@@ -1,0 +1,68 @@
+﻿@page "/articleDetails/{articleId}"
+@inject AuthenticationStateProvider authState
+@inject IRepositoryCollection repo
+@inject UserManager<CustomIdentity> userManager
+@inject RoleManager<CustomRole> roleManager
+@inject SignInManager<CustomIdentity> signInManager
+
+<div class="article-container">
+    <div style="margin-bottom: 10px; font-weight: bold;">@article?.Title</div>
+    @if (article?.Tags is not null) {
+        foreach (var tag in article.Tags) {
+            <div class="tag">@tag.Text</div>
+        }
+    }
+    <div>@article?.Content</div>
+</div>
+
+<h2>Комментарии</h2>
+@if (comments != null) {
+    foreach (var comment in comments) {
+        <div class="comment">
+            <div class="comment-content">@comment.Content</div>
+            <div class="comment-author">Автор: @comment.UserName</div>
+            <div class="comment-date">Дата: @comment.CreateDate.ToString("dd.MM.yyyy HH:mm")</div>
+        </div>
+    }
+}
+<textarea class="form-control" @bind="newCommentContent" rows="3"></textarea>
+<button @onclick="AddComment">Добавить комментарий</button>
+
+
+@code {
+    private ArticleDTO? article;
+    private List<CommentDTO>? comments;
+    AdministratorService? administratorService;
+    [Parameter]
+    public string? articleId { get; set; }
+    private string newCommentContent = "";
+
+    protected override async Task OnInitializedAsync() {
+        AuthenticationState auth = await authState.GetAuthenticationStateAsync();
+        administratorService = new(userManager, roleManager, repo ,signInManager);
+        if (articleId is not null) {
+            article = await repo.Article.GetById(articleId);
+            comments = await repo.Comment.GetAllCommentsFromArticle(articleId);
+        }
+    }
+    private async Task AddComment() {
+        if (!string.IsNullOrEmpty(newCommentContent) && article != null) {
+            AuthenticationState auth = await authState.GetAuthenticationStateAsync();
+            CommentDTO newComment = new CommentDTO {
+                    Content = newCommentContent,
+                    ArticleId = article.Id,
+                };
+
+            await repo.Comment.AddObj(auth.User,newComment);
+            await repo.Save();
+            Reset();
+            comments = await repo.Comment.GetAllCommentsFromArticle(article.Id);
+        }
+    }
+
+
+    private void Reset() {
+        newCommentContent = "";
+    }
+
+}

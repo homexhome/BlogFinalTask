@@ -16,6 +16,7 @@ public class ArticleSetupService
     private List<TagDTO> _tagsDTOs { get; set; }
     private IRepositoryCollection _repo;
     private ClaimsPrincipal _user;
+    private string? articleId;
 
     public ArticleSetupService(IRepositoryCollection repo, ArticleDTO articleDTO,
             List<TagDTO> tagsDTOs, ClaimsPrincipal user) {
@@ -27,15 +28,18 @@ public class ArticleSetupService
 
     public async Task CreateArticle() {
         if (_articleDTO is not null) {
-            await _repo.Article.AddObj(_user, _articleDTO);
-            if (_tagsDTOs.Count > 0) {
-                foreach (TagDTO tagDTO in _tagsDTOs) {
-                    ArticleTagsDTO articleTags = new() {
-                        ArticleId = _articleDTO.Id,
-                        TagId = tagDTO.Id
-                    };
-                    await _repo.ArticleTags.AddObj(_user, articleTags);
-                }
+            articleId = await _repo.Article.AddObj(_user, _articleDTO);
+        }
+    }
+
+    public async Task CreateArticleTags() {
+        if (_tagsDTOs.Count > 0) {
+            foreach (TagDTO tagDTO in _tagsDTOs) {
+                ArticleTagsDTO articleTags = new() {
+                    ArticleId = articleId!,
+                    TagId = tagDTO.Id
+                };
+                await _repo.ArticleTags.AddObj(_user, articleTags);
             }
         }
     }

@@ -10,7 +10,8 @@ namespace BlogFinalTask.Data.Repository
             CreateMap<Article, ArticleDTO>();
             CreateMap<ArticleDTO, Article>()
                 .ForMember(destination => destination.Id, option => option.Ignore());
-            CreateMap<Comment, CommentDTO>();
+            CreateMap<Comment, CommentDTO>()
+                .AfterMap((src,dest) => dest.UserName = src.User!.UserName!);
             CreateMap<CommentDTO, Comment>()
                 .ForMember(destination => destination.Id, option => option.Ignore());
             CreateMap<ArticleTags, ArticleTagsDTO>();

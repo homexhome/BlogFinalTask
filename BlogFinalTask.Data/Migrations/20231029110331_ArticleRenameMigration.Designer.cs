@@ -4,6 +4,7 @@ using BlogFinalTask.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BlogFinalTask.Web.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231029110331_ArticleRenameMigration")]
+    partial class ArticleRenameMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -52,16 +55,20 @@ namespace BlogFinalTask.Web.Data.Migrations
 
             modelBuilder.Entity("BlogFinalTask.Data.Models.ArticleTags", b =>
                 {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("ArticleId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("TagId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(max)");
+                    b.HasKey("Id");
 
-                    b.HasKey("ArticleId", "TagId");
+                    b.HasIndex("ArticleId");
 
                     b.HasIndex("TagId");
 
@@ -196,24 +203,24 @@ namespace BlogFinalTask.Web.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "5475f090-62f8-4839-b0e1-caae3ddcd473",
-                            ConcurrencyStamp = "110a23e5-5a00-458f-86f3-5afa8507f9b9",
+                            Id = "6b85412f-8b98-4bbb-9377-b724f9069a9b",
+                            ConcurrencyStamp = "fb6bf3d1-e65a-455b-bfd3-a0889257eec3",
                             Description = "Basic User Role",
                             Name = "User",
                             NormalizedName = "USER"
                         },
                         new
                         {
-                            Id = "6d70df32-32dd-4b35-be7f-137081578ec3",
-                            ConcurrencyStamp = "edb6fc2b-4d81-4bc4-a878-f49dd8edb207",
+                            Id = "3992efda-9e1d-4f5a-9aa1-50d836c2468e",
+                            ConcurrencyStamp = "6d46c352-33cd-48a1-ada8-aeea61e003c4",
                             Description = "Basic Moderator Role",
                             Name = "Moderator",
                             NormalizedName = "MODERATOR"
                         },
                         new
                         {
-                            Id = "20dd0f53-83b9-478d-8bf7-d8a423d09f7e",
-                            ConcurrencyStamp = "bfcc924d-0737-4d6d-aded-88c02d7e749a",
+                            Id = "7e9e1940-d9ff-4515-ad09-a1040d612b85",
+                            ConcurrencyStamp = "22f82825-80f1-41bb-876b-be8aa516d798",
                             Description = "Basic Admin Role",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
@@ -265,21 +272,21 @@ namespace BlogFinalTask.Web.Data.Migrations
                             Id = 3,
                             ClaimType = "Role",
                             ClaimValue = "User",
-                            RoleId = "5475f090-62f8-4839-b0e1-caae3ddcd473"
+                            RoleId = "6b85412f-8b98-4bbb-9377-b724f9069a9b"
                         },
                         new
                         {
                             Id = 2,
                             ClaimType = "Role",
                             ClaimValue = "Moderator",
-                            RoleId = "6d70df32-32dd-4b35-be7f-137081578ec3"
+                            RoleId = "3992efda-9e1d-4f5a-9aa1-50d836c2468e"
                         },
                         new
                         {
                             Id = 1,
                             ClaimType = "Role",
                             ClaimValue = "Admin",
-                            RoleId = "20dd0f53-83b9-478d-8bf7-d8a423d09f7e"
+                            RoleId = "7e9e1940-d9ff-4515-ad09-a1040d612b85"
                         });
                 });
 
@@ -382,15 +389,15 @@ namespace BlogFinalTask.Web.Data.Migrations
             modelBuilder.Entity("BlogFinalTask.Data.Models.ArticleTags", b =>
                 {
                     b.HasOne("BlogFinalTask.Data.Models.Article", "Article")
-                        .WithMany("ArticleTags")
+                        .WithMany()
                         .HasForeignKey("ArticleId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.ClientNoAction)
                         .IsRequired();
 
                     b.HasOne("BlogFinalTask.Data.Models.Tag", "Tag")
-                        .WithMany("ArticleTags")
+                        .WithMany()
                         .HasForeignKey("TagId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.ClientNoAction)
                         .IsRequired();
 
                     b.Navigation("Article");
@@ -466,16 +473,6 @@ namespace BlogFinalTask.Web.Data.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("BlogFinalTask.Data.Models.Article", b =>
-                {
-                    b.Navigation("ArticleTags");
-                });
-
-            modelBuilder.Entity("BlogFinalTask.Data.Models.Tag", b =>
-                {
-                    b.Navigation("ArticleTags");
                 });
 #pragma warning restore 612, 618
         }

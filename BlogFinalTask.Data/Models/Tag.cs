@@ -12,5 +12,6 @@ namespace BlogFinalTask.Data.Models
         [Required]
         public required string Text { get; set; }
 
+        public ICollection<ArticleTags> ArticleTags { get; set; } = new List<ArticleTags>();
     }
 }

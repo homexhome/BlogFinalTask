@@ -18,7 +18,7 @@ namespace BlogFinalTask.Data.Repository
         }
 
 
-        protected string? GetMyUserId(ClaimsPrincipal User) {
+        public string? GetMyUserId(ClaimsPrincipal User) {
             Claim? uid = User?.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier");
             if (uid is not null) {
                 return uid.Value;
