@@ -7,8 +7,8 @@ namespace BlogFinalTask.Data.DTOS
         public string Id { get; set; } = string.Empty;
         public DateTime CreateDate { get; set; } = DateTime.Now;
         [MaxLength(120)]
-        public required string Title { get; set; }
-        public required string Content { get; set; }
+        public string Title { get; set; } = null!;
+        public string Content { get; set; } = null!;
         public string UserId { get; set; } = null!;
     }
 }

@@ -1,0 +1,69 @@
+﻿@using BlogFinalTask.Services.ContentServices;
+@inject IRepositoryCollection repo
+@inject AuthenticationStateProvider authState
+@inject NavigationManager Navigation
+@using Microsoft.JSInterop
+@inject IJSRuntime JSRuntime
+
+
+<h1>Create a New Article</h1>
+
+<EditForm Model="articleDTO" OnValidSubmit="CreateArticle">
+    <DataAnnotationsValidator />
+    <div class="form-group">
+        <label>Title:</label>
+        <InputText @bind-Value="articleDTO!.Title" class="form-control" />
+        <ValidationMessage For="@(() => articleDTO.Title)" />
+    </div>
+    <div class="form-group">
+        <label>Content:</label>
+        <InputTextArea @bind-Value="articleDTO.Content" class="form-control" />
+        <ValidationMessage For="@(() => articleDTO.Content)" />
+    </div>
+    @foreach (var tag in tagsDTOs) {
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="@tag.Id" @bind="selectedTags[tag.Id]">
+            <label class="form-check-label" for="@tag.Id">
+                @tag.Text
+            </label>
+        </div>
+    }
+    <button type="submit" class="btn btn-primary">Create</button>
+</EditForm>
+
+@code {
+    private ArticleDTO? articleDTO = new();
+    private List<TagDTO> tagsDTOs = new List<TagDTO>();
+    private Dictionary<string, bool> selectedTags = new Dictionary<string, bool>();
+
+    protected override async Task OnInitializedAsync() {
+        AuthenticationState auth = await authState.GetAuthenticationStateAsync();
+        tagsDTOs = await repo.Tag.GetAllAsync(auth.User);
+        foreach (var tag in tagsDTOs) {
+            selectedTags[tag.Id] = false;
+        }
+    }
+
+    private async Task CreateArticle() {
+        AuthenticationState auth = await authState.GetAuthenticationStateAsync();
+        if (articleDTO is not null && auth.User is not null) {
+            if (string.IsNullOrEmpty(articleDTO.Title) || string.IsNullOrEmpty(articleDTO.Content)) {
+                await JSRuntime.InvokeVoidAsync("alert", "Title and Content are required fields.");
+                return;
+            }
+
+            articleDTO.UserId = auth.User!.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")!.Value;
+
+            List<TagDTO> selectedTagObjects = tagsDTOs
+                .Where(tag => selectedTags.ContainsKey(tag.Id.ToString()) && selectedTags[tag.Id.ToString()])
+                .ToList();
+
+            ArticleSetupService articleSetupService = new(repo, articleDTO, selectedTagObjects, auth.User);
+            await articleSetupService.CreateArticle();
+            await repo.Save();
+            Navigation.NavigateTo("/");
+        }
+    }
+
+
+}
