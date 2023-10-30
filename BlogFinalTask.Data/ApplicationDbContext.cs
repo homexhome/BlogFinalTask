@@ -37,12 +37,18 @@ namespace BlogFinalTask.Data
                 .HasOne(at => at.Article)
                 .WithMany(a => a.ArticleTags)
                 .HasForeignKey(at => at.ArticleId)
-                .OnDelete(DeleteBehavior.Cascade); 
+                .OnDelete(DeleteBehavior.Cascade);
 
             builder.Entity<ArticleTags>()
                 .HasOne(at => at.Tag)
                 .WithMany(t => t.ArticleTags)
                 .HasForeignKey(at => at.TagId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<Comment>()
+                .HasOne(c => c.User)
+                .WithMany()
+                .HasForeignKey(c => c.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             string userId = Guid.NewGuid().ToString();
@@ -85,7 +91,7 @@ namespace BlogFinalTask.Data
                 ClaimValue = "Moderator"
             });
             builder.Entity<IdentityRoleClaim<string>>().HasData(new IdentityRoleClaim<string> {
-                Id =1,
+                Id = 1,
                 RoleId = adminId,
                 ClaimType = "Role",
                 ClaimValue = "Admin"

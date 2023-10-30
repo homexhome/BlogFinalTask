@@ -43,5 +43,13 @@ public class ArticleSetupService
             }
         }
     }
+    public async Task UdpateArticleTags(string articleIdToUpdate) {
+            articleId = articleIdToUpdate;
+            List<ArticleTagsDTO> articleTagsToUpdate = await _repo.ArticleTags.GetDTOByArticleId(articleId!);
+            foreach (ArticleTagsDTO articleTagDTO in articleTagsToUpdate) {
+                await _repo.ArticleTags.DeleteObj(_user,articleTagDTO.Id);
+            }
+            await CreateArticleTags();
+    }
 }
 

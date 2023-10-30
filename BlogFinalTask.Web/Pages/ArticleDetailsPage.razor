@@ -4,6 +4,8 @@
 @inject UserManager<CustomIdentity> userManager
 @inject RoleManager<CustomRole> roleManager
 @inject SignInManager<CustomIdentity> signInManager
+@inject NavigationManager navigationManager
+
 
 <div class="article-container">
     <div style="margin-bottom: 10px; font-weight: bold;">@article?.Title</div>
@@ -20,7 +22,7 @@
     foreach (var comment in comments) {
         <div class="comment">
             <div class="comment-content">@comment.Content</div>
-            <div class="comment-author">Автор: @comment.UserName</div>
+            <div class="comment-author">Автор: <span style="color: blue; cursor: pointer;" @onclick="() => OpenUserProfile(comment.UserId)"> @comment.UserName</span></div>
             <div class="comment-date">Дата: @comment.CreateDate.ToString("dd.MM.yyyy HH:mm")</div>
         </div>
     }
@@ -42,6 +44,7 @@
         administratorService = new(userManager, roleManager, repo ,signInManager);
         if (articleId is not null) {
             article = await repo.Article.GetById(articleId);
+            article.Tags = await repo.ArticleTags.GetArticleTagsById(article.Id);
             comments = await repo.Comment.GetAllCommentsFromArticle(articleId);
         }
     }
@@ -63,6 +66,10 @@
 
     private void Reset() {
         newCommentContent = "";
+    }
+
+    void OpenUserProfile(string userId) {
+        navigationManager.NavigateTo($"/user/{userId}");
     }
 
 }

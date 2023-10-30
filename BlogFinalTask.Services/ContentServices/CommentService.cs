@@ -25,5 +25,10 @@ namespace BlogFinalTask.Services.ContentServices
             await _repo.Comment.AddObj(_user, comment);
         }
 
+        public async Task<List<CommentDTO>> GetUserComments(string userId) {
+            var commentList = await _repo.Comment.GetAllAsync(_user);
+            var result = commentList.Where( u=> u.UserId == userId ).ToList();
+            return result;
+        }
     }
 }

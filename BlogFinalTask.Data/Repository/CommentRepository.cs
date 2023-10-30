@@ -11,6 +11,18 @@ namespace BlogFinalTask.Data.Repository
         public CommentRepository(ApplicationDbContext context, IMapper mapper) : base(context, mapper) {
         }
 
+        public override async Task<List<CommentDTO>> GetAllAsync(ClaimsPrincipal User) {
+            string? userId = GetMyUserId(User);
+            if (userId is not null) {
+                List<Comment> entities = await context.Set<Comment>().Include(c => c.User).ToListAsync();
+                List<CommentDTO> result = mapper.Map<List<CommentDTO>>(entities);
+                return result;
+            }
+            else {
+                return new List<CommentDTO>();
+            }
+        }
+
         public async Task<List<CommentDTO>> GetAllCommentsFromArticle(string articleId) {
             List<Comment> comments = await context.Comments.Include(c => c.User)
                                                            .Where(c => c.ArticleId == articleId)

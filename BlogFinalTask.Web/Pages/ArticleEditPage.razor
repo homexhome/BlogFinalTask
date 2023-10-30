@@ -1,0 +1,103 @@
+﻿@page "/articleEdit/{articleId}"
+@using BlogFinalTask.Services.ContentServices;
+
+@inject AuthenticationStateProvider authState
+@inject IRepositoryCollection repo
+@inject UserManager<CustomIdentity> userManager
+@inject RoleManager<CustomRole> roleManager
+@inject SignInManager<CustomIdentity> signInManager
+@inject DialogService DialogService
+@inject NavigationManager navigationManager
+
+
+@if (!isEditing) {
+    <div class="article-container">
+        <div style="margin-bottom: 10px; font-weight: bold;">@article?.Title</div>
+        @if (article?.Tags is not null) {
+            foreach (var tag in article.Tags) {
+                <div class="tag">@tag.Text</div>
+            }
+        }
+        <div>@article?.Content</div>
+
+        <button class="btn btn-primary" @onclick="StartEditing">Редактировать статью</button>
+    </div>
+}
+else {
+    <div class="article-container">
+        <h2>Редактировать статью</h2>
+        <form @onsubmit="SaveChanges">
+            <div class="form-group">
+                <label for="title">Заголовок:</label>
+                <input type="text" id="title" class="form-control" @bind="article!.Title" />
+            </div>
+            <div class="form-group">
+                <label for="content">Содержание:</label>
+                <textarea id="content" class="form-control" @bind="article.Content"></textarea>
+            </div>
+
+            <h3>Теги:</h3>
+            @foreach (var tag in tagsDTOs) {
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" @bind="selectedTags[tag.Id]" />
+                    <label class="form-check-label">@tag.Text</label>
+                </div>
+            }
+            <button type="submit" class="btn btn-primary">Сохранить</button>
+        </form>
+    </div>
+}
+
+
+
+@code {
+    private ArticleDTO? article;
+    private bool isEditing = false;
+    AdministratorService? administratorService;
+    private Dictionary<string, bool> selectedTags = new Dictionary<string, bool>();
+    private List<TagDTO> tagsDTOs = new List<TagDTO>();
+
+    [Parameter]
+    public string? articleId { get; set; }
+
+    protected override async Task OnInitializedAsync() {
+        AuthenticationState auth = await authState.GetAuthenticationStateAsync();
+        administratorService = new(userManager, roleManager, repo ,signInManager);
+        if (articleId is not null) {
+            article = await repo.Article.GetById(articleId);
+            article.Tags = await repo.ArticleTags.GetArticleTagsById(article.Id);
+            tagsDTOs = await repo.Tag.GetAllAsync(auth.User);
+            foreach (var tag in tagsDTOs) {
+                selectedTags[tag.Id.ToString()] = article.Tags.Contains(tag);
+            }
+        }
+    }
+    private async Task StartEditing() {
+        article = await repo.Article.GetById(articleId!);
+        isEditing = true;
+    }
+
+    private async Task SaveChanges() {
+        AuthenticationState auth = await authState.GetAuthenticationStateAsync();
+
+        if (article is not null && (string.IsNullOrWhiteSpace(article.Title) || string.IsNullOrWhiteSpace(article.Content))) {
+            await DialogService.Alert("Title and Content are required fields!", "Alert",
+                    new AlertOptions() { OkButtonText = "Got it" });
+            return;
+        }
+        else {
+            if (article is not null){
+                article.Tags = await repo.ArticleTags.GetArticleTagsById(articleId!);
+                List<TagDTO> selectedTagObjects = tagsDTOs
+                .Where(tag => selectedTags.ContainsKey(tag.Id.ToString()) && selectedTags[tag.Id.ToString()])
+                .ToList();
+                ArticleSetupService articleSetupService = new(repo, article, selectedTagObjects, auth.User);
+                await repo.Article.UpdateObj(auth.User, article);
+                await articleSetupService.UdpateArticleTags(articleId!);
+                await repo.Save();
+                navigationManager.NavigateTo($"/ArticleEdit/{articleId}",true);
+            }
+            isEditing = false;
+        }
+    }
+}

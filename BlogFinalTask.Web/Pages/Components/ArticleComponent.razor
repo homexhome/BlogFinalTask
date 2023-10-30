@@ -16,7 +16,10 @@
                     }
                 }
                     <div>@article.Content</div>
-                    <button @onclick="()=> ViewComments(article.Id)">Просмотреть комментарии</button>
+                    <AuthorizeView>
+                        <button @onclick="()=> ViewComments(article.Id)">Просмотреть комментарии</button>
+                        <button @onclick="()=> EditArticle(article.Id)">Редактировать статью</button>
+                    </AuthorizeView>
                 </div>
             </Template>
         </RadzenDataGridColumn>
@@ -43,5 +46,8 @@
     }
     void ViewComments(string articleId) {
         navigationManager.NavigateTo($"/ArticleDetails/{articleId}");
+    }
+    void EditArticle(string articleId) {
+        navigationManager.NavigateTo($"/ArticleEdit/{articleId}");
     }
 }

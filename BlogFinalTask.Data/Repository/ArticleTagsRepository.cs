@@ -2,6 +2,7 @@
 using BlogFinalTask.Data.DTOS;
 using BlogFinalTask.Data.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace BlogFinalTask.Data.Repository
 {
@@ -17,6 +18,20 @@ namespace BlogFinalTask.Data.Repository
                                                          .ToListAsync();
             List<TagDTO> result = mapper.Map<List<TagDTO>>(articleTagsList);
             return result;
+        }
+
+        public async Task<List<ArticleTagsDTO>> GetDTOByArticleId(string id) {
+            List<ArticleTags> articleTags = await context.Set<ArticleTags>().Where(at => at.ArticleId == id)
+                .ToListAsync();
+            List<ArticleTagsDTO> result = mapper.Map<List<ArticleTagsDTO>>(articleTags);
+            return result;
+        }
+
+        public async Task<int> GetArticleCountByTag(string tagId) {
+            List<ArticleTags> articleTags = await context.Set<ArticleTags>()
+                                                         .Where(at => at.TagId == tagId)
+                                                         .ToListAsync();
+            return articleTags.Count;
         }
     }
 }

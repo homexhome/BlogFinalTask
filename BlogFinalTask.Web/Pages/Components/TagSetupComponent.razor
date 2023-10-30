@@ -14,7 +14,7 @@
                     </EditTemplate>
 
                 </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="TagDTO" Context="tag" Filterable="false" Sortable="false" TextAlign="TextAlign.Right" Width="150px">
+                <RadzenDataGridColumn TItem="TagDTO" Context="tag" Filterable="false" Sortable="false" TextAlign="TextAlign.Right" Width="60px">
                     <Template Context="tag">
                         <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@(args => EditRow(tag))" @onclick:stopPropagation="true">
                         </RadzenButton>
@@ -30,6 +30,11 @@
                         </RadzenButton>
                     </EditTemplate>
                 </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="TagDTO" TextAlign="TextAlign.Center" Width="50px" Title="Article Count">
+                    <Template Context="tag">
+                        @GetArticleCount(tag.Id)
+                    </Template>
+                </RadzenDataGridColumn>
 
             </Columns>
         </RadzenDataGrid>
@@ -41,11 +46,16 @@
     RadzenDataGrid<TagDTO>? tagGrid;
     TagDTO? tagToInsert;
     TagDTO? tagToUpdate;
+    private Dictionary<string, int> articleCounts = new Dictionary<string, int>();
 
     protected override async Task OnInitializedAsync() {
         AuthenticationState auth = await authState.GetAuthenticationStateAsync();
 
         allTags = await repo.Tag.GetAllAsync(auth.User);
+        foreach (var tag in allTags) {
+            int count = await repo.ArticleTags.GetArticleCountByTag(tag.Id);
+            articleCounts[tag.Id] = count;
+        }
     }
 
     async Task EditRow(TagDTO tag) {
@@ -112,5 +122,13 @@
     void Reset() {
         tagToInsert = null;
         tagToUpdate = null;
+    }
+    private int GetArticleCount(string tagId) {
+        if (articleCounts.TryGetValue(tagId, out int count)) {
+            return count;
+        }
+        else {
+            return 0;
+        }
     }
 }

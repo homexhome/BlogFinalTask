@@ -1,0 +1,102 @@
+﻿@page "/user/{userId}"
+@using BlogFinalTask.Services.ContentServices;
+@inject AuthenticationStateProvider authState
+@inject IRepositoryCollection repo
+@inject UserManager<CustomIdentity> userManager
+@inject RoleManager<CustomRole> roleManager
+@inject SignInManager<CustomIdentity> signInManager
+
+<div class="profile-container">
+    <h1>User Profile</h1>
+    <div class="profile-info">
+        <strong>User name:</strong> @userName <br />
+        <strong>Article count:</strong> @userArticlesCount <br />
+        <strong>Comments count:</strong> @userCommentCount
+    </div>
+
+    <div class="random-section">
+        <h2>Random User Article</h2>
+        @if (articles != null && articles.Any()) {
+            var randomArticle = articles[new Random().Next(articles.Count)];
+            <div class="article">
+                <h3>@randomArticle.Title</h3>
+                <p>@randomArticle.Content</p>
+            </div>
+        }
+        else {
+            <p>This user does not have any articles.</p>
+        }
+    </div>
+
+    <div class="random-section">
+        <h2>Random User Comment</h2>
+        @if (comments != null && comments.Any()) {
+            var randomComment = comments[new Random().Next(comments.Count)];
+            <div class="comment">
+                <p>@randomComment.Content</p>
+                <p>@randomComment.CreateDate</p>
+            </div>
+        }
+        else {
+            <p>This user does not have any comments.</p>
+        }
+    </div>
+</div>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 0;
+    }
+
+    .profile-container {
+        background-color: #ffffff;
+        margin: 20px auto;
+        padding: 20px;
+        width: 80%;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .profile-info {
+        margin-bottom: 20px;
+    }
+
+    .section {
+        background-color: #ffffff;
+        margin-bottom: 30px;
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .article, .comment {
+        margin-top: 10px;
+    }
+</style>
+
+@code {
+    [Parameter]
+    public required string userId { get; set; }
+    public int userCommentCount;
+    public int userArticlesCount;
+    public List<ArticleDTO>? articles;
+    public List<CommentDTO>? comments;
+    public CustomIdentity? userOnPage;
+    private string userName = string.Empty;
+
+    protected async override Task OnInitializedAsync() {
+        AuthenticationState auth = await authState.GetAuthenticationStateAsync();
+        ArticleFetchService fetchService = new(repo, auth.User);
+        articles = await fetchService.GetAllArticlesByUser(userId);
+        userArticlesCount = articles.Count();
+
+        CommentService commentService = new(repo, auth.User);
+        comments = await commentService.GetUserComments(userId);
+        userCommentCount = comments.Count();
+
+        userOnPage = await userManager.FindByIdAsync(userId);
+        userName = userOnPage!.UserName!;
+    }
+}
