@@ -1,6 +1,7 @@
 ﻿using BlogFinalTask.Data.DTOS;
 using BlogFinalTask.Data.Repository;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,6 +30,7 @@ public class ArticleSetupService
     public async Task CreateArticle() {
         if (_articleDTO is not null) {
             articleId = await _repo.Article.AddObj(_user, _articleDTO);
+            _repo.logger.LogDebug(1, $"{_user.Identity!.Name} created article with title {_articleDTO.Title} at {DateTime.UtcNow}");
         }
     }
 

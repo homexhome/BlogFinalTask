@@ -1,5 +1,20 @@
-﻿<h1>No Content Error</h1>
+﻿@inject IRepositoryCollection repo
+@inject NavigationManager NavigationManager
+@inject IHttpContextAccessor HttpContextAccessor
+@using System.Net
+@using BlogFinalTask.Services.Helpers;
+@page "/nocontent"
+
+<h1>No Content Error</h1>
 <p>The requested content could not be found.</p>
+@{
+    LogError();
+}
+
 @code {
+    public void LogError() {
+        ErrorLogger errorLogger = new(repo, NavigationManager, HttpContextAccessor);
+        errorLogger.LogNoContentError();
+    }
 
 }

@@ -6,6 +6,9 @@ using BlogFinalTask.Services.AdministrationTools;
 using BlogFinalTask.Web.Areas.Identity;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.EntityFrameworkCore;
+using NLog.Extensions.Logging;
+using NLog;
+using NLog.Web;
 using Radzen;
 using System.Security.Claims;
 
@@ -14,6 +17,9 @@ namespace BlogFinalTask.Web
     public class Program
     {
         public static void Main(string[] args) {
+            var logger = NLog.LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
+            logger.Debug("init main");
+
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
@@ -44,6 +50,9 @@ namespace BlogFinalTask.Web
             builder.Services.AddSingleton(mapper);
             builder.Services.AddScoped<AdministratorService>();
 
+            builder.Logging.ClearProviders();
+            builder.Host.UseNLog();
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -57,6 +66,7 @@ namespace BlogFinalTask.Web
             }
 
             app.UseHttpsRedirection();
+            app.UseIPAddressMiddleware();
 
             app.UseStaticFiles();
 

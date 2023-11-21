@@ -1,5 +1,6 @@
 ﻿using BlogFinalTask.Data.DTOS;
 using BlogFinalTask.Data.Repository;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,6 +24,7 @@ namespace BlogFinalTask.Services.ContentServices
             comment.ArticleId = articleId;
             comment.UserId = userId;
             await _repo.Comment.AddObj(_user, comment);
+            _repo.logger.LogDebug(1, $"{_user.Identity!.Name} created comment at article with id -  {articleId} at {DateTime.UtcNow}");
         }
 
         public async Task<List<CommentDTO>> GetUserComments(string userId) {

@@ -47,7 +47,7 @@ namespace BlogFinalTask.Web.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Articles");
+                    b.ToTable("Articles", (string)null);
                 });
 
             modelBuilder.Entity("BlogFinalTask.Data.Models.ArticleTags", b =>
@@ -65,7 +65,7 @@ namespace BlogFinalTask.Web.Data.Migrations
 
                     b.HasIndex("TagId");
 
-                    b.ToTable("ArticleTags");
+                    b.ToTable("ArticleTags", (string)null);
                 });
 
             modelBuilder.Entity("BlogFinalTask.Data.Models.Comment", b =>
@@ -95,7 +95,7 @@ namespace BlogFinalTask.Web.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Comments");
+                    b.ToTable("Comments", (string)null);
                 });
 
             modelBuilder.Entity("BlogFinalTask.Data.Models.CustomIdentity", b =>
@@ -232,7 +232,7 @@ namespace BlogFinalTask.Web.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Tags");
+                    b.ToTable("Tags", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

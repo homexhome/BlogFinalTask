@@ -7,7 +7,7 @@ namespace BlogFinalTask.Data.Models
     {
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public string Id { get; set; } = Guid.NewGuid().ToString();
-        public DateTime CreateDate { get; set; } = DateTime.Now;
+        public DateTime CreateDate { get; set; } = DateTime.UtcNow;
         [MaxLength(120)]
         public required string Title { get; set; } = string.Empty;
         public required string Content { get; set; } = string.Empty;

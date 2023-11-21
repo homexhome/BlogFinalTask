@@ -1,4 +1,6 @@
-﻿namespace BlogFinalTask.Data.Repository
+﻿using Microsoft.Extensions.Logging;
+
+namespace BlogFinalTask.Data.Repository
 {
     public interface IRepositoryCollection : IDisposable
     {
@@ -6,6 +8,8 @@
         ICommentRepository Comment { get; }
         ITagRepository Tag { get; }
         IArticleTagsRepository ArticleTags { get; }
+        ILogger<IRepositoryCollection> logger { get; }
+
 
         Task<int> Save();
     }
