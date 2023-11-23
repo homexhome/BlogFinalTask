@@ -11,6 +11,7 @@ using NLog;
 using NLog.Web;
 using Radzen;
 using System.Security.Claims;
+using Microsoft.OpenApi.Models;
 
 namespace BlogFinalTask.Web
 {
@@ -53,17 +54,33 @@ namespace BlogFinalTask.Web
             builder.Logging.ClearProviders();
             builder.Host.UseNLog();
 
+            builder.Services.AddSwaggerGen(options => {
+                options.SwaggerDoc("v1", new OpenApiInfo {
+                    Version = "v1",
+                    Title = "Learning Blog",
+                    Description = "A Blazor app - blog with articles and comments to them",
+                });
+            });
             var app = builder.Build();
+
+            app.UseSwagger();
+            
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment()) {
                 app.UseMigrationsEndPoint();
+                app.UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Blazor API V1");
+                });
             }
             else {
                 app.UseExceptionHandler("/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
+
 
             app.UseHttpsRedirection();
             app.UseIPAddressMiddleware();

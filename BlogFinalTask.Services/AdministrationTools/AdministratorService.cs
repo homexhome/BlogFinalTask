@@ -4,12 +4,15 @@ using BlogFinalTask.Data.Repository;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
 namespace BlogFinalTask.Services.AdministrationTools
 {
     [Authorize(Policy = "RequireAdminRole")]
+    [Route("adminService")]
+    [ApiController]
     public class AdministratorService : IAdministratorService
     {
         private readonly UserManager<CustomIdentity> _userManager;
@@ -24,7 +27,7 @@ namespace BlogFinalTask.Services.AdministrationTools
             _repo = repo;
             _signInManager = signInManager;
         }
-
+        [HttpGet("getAllUsers")]
         public async Task<List<CustomUserTransferModel>> GetAllUsers() {
             List<CustomUserTransferModel> allUserList = new();
             List<CustomIdentity> userList = await _userManager.Users.ToListAsync();
@@ -41,7 +44,7 @@ namespace BlogFinalTask.Services.AdministrationTools
             }
             return allUserList;
         }
-
+        [NonAction]
         public async Task<string>? GetUserName(string userId) {
             var user = await _userManager.FindByIdAsync(userId);
             if (user is not null && user.UserName is not null) {
@@ -50,7 +53,7 @@ namespace BlogFinalTask.Services.AdministrationTools
                 return null!;
             }
         }
-
+        [NonAction]
         public async Task<List<string>> GetAllRolesList() {
             List<string> result = new();
             var roleList = await _roleManager.Roles.ToListAsync();
@@ -63,7 +66,7 @@ namespace BlogFinalTask.Services.AdministrationTools
             }
             return result;
         }
-
+        [NonAction]
         public async Task<List<CustomRole>> GetAllRoles() {
             List<CustomRole> result = new();
             var roleList = await _roleManager.Roles.ToListAsync();
@@ -76,7 +79,7 @@ namespace BlogFinalTask.Services.AdministrationTools
             }
             return result;
         }
-
+        [NonAction]
         public async Task UpdateUser(CustomUserTransferModel customUserModel) {
             RoleService roleService = new(_userManager, _roleManager);
             ClaimsService claimsService = new(_userManager, _roleManager);
@@ -90,7 +93,7 @@ namespace BlogFinalTask.Services.AdministrationTools
             await LogOutUser(_signInManager, userId);
         }
 
-
+        [NonAction]
         public async Task SaveChangesAsync() {
             try {
                 await _repo.Save();
@@ -99,14 +102,14 @@ namespace BlogFinalTask.Services.AdministrationTools
                 throw new Exception(ex.Message, ex);
             }
         }
-
+        [NonAction]
         public async Task LogOutUser(SignInManager<CustomIdentity> signInManager, string userId) {
             var principle = await GetUserClaimsPrincipalById(userId);
             if (signInManager.IsSignedIn(principle)) { //BIG TODO: Не могу понять пока, как тут это настроить, чтобы разлогинить пользователя
                 await signInManager.SignOutAsync();
             }
         }
-
+        [NonAction]
         public async Task<ClaimsPrincipal> GetUserClaimsPrincipalById(string userId) {
             var user = await _userManager.FindByIdAsync(userId);
             if (user != null) {
