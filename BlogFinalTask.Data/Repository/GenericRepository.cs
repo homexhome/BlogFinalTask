@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BlogFinalTask.Data.DTOS;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
@@ -17,7 +18,7 @@ namespace BlogFinalTask.Data.Repository
             this.mapper = mapper;
         }
 
-
+        [NonAction]
         public string? GetMyUserId(ClaimsPrincipal User) {
             Claim? uid = User?.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier");
             if (uid is not null) {
@@ -28,6 +29,7 @@ namespace BlogFinalTask.Data.Repository
             }
         }
 
+        [NonAction]
         public virtual async Task<List<TDTO>> GetAllAsync(ClaimsPrincipal User) {
             string? userId = GetMyUserId(User);
             if (userId is not null) {
@@ -39,6 +41,7 @@ namespace BlogFinalTask.Data.Repository
                 return new List<TDTO>();
             }
         }
+        [NonAction]
         public virtual async Task<string> AddObj(ClaimsPrincipal User, TDTO dto) {
             string? userId = GetMyUserId(User);
             if (userId is not null) {
@@ -52,6 +55,7 @@ namespace BlogFinalTask.Data.Repository
             }
         }
 
+        [NonAction]
         public virtual async Task<TDTO> UpdateObj(ClaimsPrincipal User, TDTO dto) {
             string? userId = GetMyUserId(User);
             if (userId is not null) {
@@ -72,6 +76,7 @@ namespace BlogFinalTask.Data.Repository
             }
         }
 
+        [NonAction]
         public virtual async Task<bool> DeleteObj(ClaimsPrincipal User, string id) {
             string? userId = GetMyUserId(User);
             if (userId is not null) {

@@ -12,6 +12,7 @@ using NLog.Web;
 using Radzen;
 using System.Security.Claims;
 using Microsoft.OpenApi.Models;
+using System.Reflection;
 
 namespace BlogFinalTask.Web
 {
@@ -55,12 +56,15 @@ namespace BlogFinalTask.Web
             builder.Host.UseNLog();
 
             builder.Services.AddSwaggerGen(options => {
-                options.SwaggerDoc("v1", new OpenApiInfo {
-                    Version = "v1",
-                    Title = "Learning Blog",
-                    Description = "A Blazor app - blog with articles and comments to them",
+            options.SwaggerDoc("v1", new OpenApiInfo {
+                Version = "v1",
+                Title = "Learning Blog",
+                Description = "A Blazor app - blog with articles and comments to them",
                 });
+            options.EnableAnnotations();
             });
+
+
             var app = builder.Build();
 
             app.UseSwagger();

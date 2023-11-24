@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Swashbuckle.AspNetCore.Annotations;
 using System.Security.Claims;
 
 namespace BlogFinalTask.Services.AdministrationTools
@@ -27,7 +28,18 @@ namespace BlogFinalTask.Services.AdministrationTools
             _repo = repo;
             _signInManager = signInManager;
         }
+
+        /// <summary>
+        /// Gets all users with additional details.
+        /// </summary>
+        /// <remarks>
+        /// This endpoint returns a list of users with their usernames, user IDs, and roles.
+        /// </remarks>
+        /// <returns>
+        /// A list of <see cref="CustomUserTransferModel"/> representing the users.</returns>
+        [SwaggerOperation(Summary = "Gets all users with additional details.", Description = "This endpoint returns a list of users with their usernames, user IDs, and roles.")]
         [HttpGet("getAllUsers")]
+        [AllowAnonymous]
         public async Task<List<CustomUserTransferModel>> GetAllUsers() {
             List<CustomUserTransferModel> allUserList = new();
             List<CustomIdentity> userList = await _userManager.Users.ToListAsync();
@@ -44,6 +56,7 @@ namespace BlogFinalTask.Services.AdministrationTools
             }
             return allUserList;
         }
+
         [NonAction]
         public async Task<string>? GetUserName(string userId) {
             var user = await _userManager.FindByIdAsync(userId);
@@ -53,7 +66,16 @@ namespace BlogFinalTask.Services.AdministrationTools
                 return null!;
             }
         }
-        [NonAction]
+        /// <summary>
+        /// Gets roles.
+        /// </summary>
+        /// <remarks>
+        /// This endpoint returns a list of roles.
+        /// </remarks>
+        /// <returns>
+        [SwaggerOperation(Summary = "Gets roles.", Description = "This endpoint returns a list of roles.")]
+        [HttpGet("getAllRoles")]
+        [AllowAnonymous]
         public async Task<List<string>> GetAllRolesList() {
             List<string> result = new();
             var roleList = await _roleManager.Roles.ToListAsync();
